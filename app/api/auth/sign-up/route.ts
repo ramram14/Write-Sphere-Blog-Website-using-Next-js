@@ -37,6 +37,10 @@ export const POST = async (req: NextRequest) => {
     const response = NextResponse.json({
       success: true,
       message: 'User sign up successfully',
+      data: {
+        fullname: user.fullname,
+        username: user.username,
+      }
     }, {
       status: 201
     })

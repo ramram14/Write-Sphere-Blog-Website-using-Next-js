@@ -8,7 +8,7 @@ export const POST = async () => {
     cookieStrore.delete(process.env.USER_TOKEN_NAME!);
     return NextResponse.json({
       success: true,
-      message: 'User signed out successfully'
+      message: 'User signed out successfully',
     }, {
       status: 200
     });
