@@ -34,7 +34,6 @@ export const POST = async (req: NextRequest) => {
       })
     }
     const token = await existedUser.generateJWTToken();
-
     const response = NextResponse.json({
       success: true,
       message: 'User sign in successfully',

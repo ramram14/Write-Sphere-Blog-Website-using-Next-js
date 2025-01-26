@@ -58,12 +58,14 @@ userSchema.methods.isPasswordCorrect = async function (password: string) {
 }
 
 userSchema.methods.generateJWTToken = function () {
+  console.log(process.env.JWT_SECRET_KEY);
+  console.log('process.env.JWT_SECRET_KEY');
   return jwt.sign({
-    id: this._id
+    _id: this._id
   },
     process.env.JWT_SECRET_KEY!,
     {
-      expiresIn: parseInt(process.env.JWT_TOKEN_EXPIRY!, 10)
+      expiresIn: '7d'
     }
   )
 }
