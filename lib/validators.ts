@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { string, z } from 'zod'
 
 function validateFile() {
   const maxUploadSize = 2 * 1024 * 1024;
@@ -33,4 +33,16 @@ export const updateProfileDataSchema = z.object({
   return data.fullname || data.username || data.email || data.profileImage;
 }, {
   message: 'At least one field must be updated'
+})
+export const CreateBlogSchema = z.object({
+  title: string().min(5, 'Must be at least 5 characters long'),
+  image: validateFile(),
+  content: string().min(10, 'Must be at least 10 characters long'),
+  category: z.enum(['Lifestyle', 'Hobby', 'Finance', 'Health', 'Philosophy', 'Technology', 'Self Improvement', 'Food', 'Education', 'Entertainment'])
+})
+export const updateBlogSchema = z.object({
+  title: string().min(5, 'Must be at least 5 characters long').optional(),
+  image: validateFile().optional(),
+  content: string().min(10, 'Must be at least 10 characters long').optional(),
+  category: z.enum(['Lifestyle', 'Hobby', 'Finance', 'Health', 'Philosophy', 'Technology', 'Self Improvement', 'Food', 'Education', 'Entertainment']).optional(),
 })
