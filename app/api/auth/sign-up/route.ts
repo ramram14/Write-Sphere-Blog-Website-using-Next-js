@@ -9,11 +9,12 @@ connectDb();
 
 export const POST = async (req: NextRequest) => {
   try {
-    const reqBody = await req.json();
-    signUpSchema.parse(reqBody);
+    const formData = await req.formData();
+    const fields = Object.fromEntries(formData);
+    signUpSchema.parse(fields);
 
     const existedUser = await User.findOne({
-      $or: [{ email: reqBody.email }, { username: reqBody.username }]
+      $or: [{ email: fields.email }, { username: fields.username }]
     });
     if (existedUser) {
       return NextResponse.json({
@@ -25,10 +26,10 @@ export const POST = async (req: NextRequest) => {
     }
 
     const user = new User({
-      fullname: reqBody.fullname,
-      username: reqBody.username,
-      email: reqBody.email,
-      password: reqBody.password
+      fullname: fields.fullname,
+      username: fields.username,
+      email: fields.email,
+      password: fields.password
     })
     await user.save();
     const token = await user.generateJWTToken();

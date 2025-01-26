@@ -9,10 +9,12 @@ connectDb();
 
 export const POST = async (req: NextRequest) => {
   try {
-    const reqBody = await req.json();
-    signInSchema.parse(reqBody);
+    const formData = await req.formData();
+    const fields = Object.fromEntries(formData);
 
-    const existedUser = await User.findOne({ email: reqBody.email });
+    signInSchema.parse(fields);
+
+    const existedUser = await User.findOne({ email: fields.email });
     if (!existedUser) {
       return NextResponse.json({
         success: false,
@@ -22,7 +24,7 @@ export const POST = async (req: NextRequest) => {
       })
     }
 
-    const isPasswordValid = await existedUser.isPasswordCorrect(reqBody.password);
+    const isPasswordValid = await existedUser.isPasswordCorrect(fields.password);
     if (!isPasswordValid) {
       return NextResponse.json({
         success: false,
