@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-aspect-ratio": "^1.1.1",
+    "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.5",
     "axios": "^1.7.9",
@@ -16,6 +18,7 @@
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
+    "immer": "^10.1.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.474.0",
     "moment": "^2.30.1",

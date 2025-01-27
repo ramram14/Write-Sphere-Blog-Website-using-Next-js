@@ -14,12 +14,12 @@ interface IUserStore {
   hydrated: boolean;
 
   setHydrated(): void;
-  signUp(formData: FormData): Promise<string | undefined | AxiosError | unknown>;
-  signIn(formData: FormData): Promise<string | undefined | AxiosError | unknown>;
-  signOut(): Promise<void>;
+  signUp(formData: FormData, onSuccess: () => void): Promise<string | undefined | AxiosError | unknown>;
+  signIn(formData: FormData, onSuccess: () => void): Promise<string | undefined | AxiosError | unknown>;
+  signOut(onSuccess?: () => void): Promise<void>;
 }
 
-export const userUserStore = create<IUserStore>()(
+export const useUserStore = create<IUserStore>()(
   persist(
     immer((set) => ({
       user: null,
@@ -29,11 +29,11 @@ export const userUserStore = create<IUserStore>()(
 
       setHydrated: () => set({ hydrated: true }),
 
-      signUp: async (formData: FormData) => {
+      signUp: async (formData: FormData, onSuccess: () => void) => {
         try {
           set({ isLoading: true })
           const { data } = await axiosInstance.
-            post('/auth/signup', formData, {
+            post('/auth/sign-up', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
@@ -42,18 +42,22 @@ export const userUserStore = create<IUserStore>()(
             user: data.data,
             isAuthenticated: true
           })
+          onSuccess()
         } catch (error: AxiosError | unknown) {
+          if (error instanceof AxiosError) {
+            return error.response?.data?.message;
+          }
           return (error as { message: string }).message
         } finally {
           set({ isLoading: false })
         }
       },
 
-      signIn: async (formData: FormData) => {
+      signIn: async (formData: FormData, onSuccess: () => void) => {
         try {
           set({ isLoading: true })
           const { data } = await axiosInstance.
-            post('/auth/signin', formData, {
+            post('/auth/sign-in', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
@@ -62,21 +66,26 @@ export const userUserStore = create<IUserStore>()(
             user: data.data,
             isAuthenticated: true
           })
+          onSuccess()
         } catch (error: AxiosError | unknown) {
+          if (error instanceof AxiosError) {
+            return error.response?.data?.message;
+          }
           return (error as { message: string }).message
         } finally {
           set({ isLoading: false })
         }
       },
 
-      signOut: async () => {
+      signOut: async (onSuccess?: () => void) => {
         try {
           set({ isLoading: true })
-          await axiosInstance.post('/auth/signout')
+          await axiosInstance.post('/auth/sign-out')
           set({
             user: null,
             isAuthenticated: false
           })
+          onSuccess?.()
         } catch (error: AxiosError | unknown) {
           handleAxiosError(error)
         } finally {
