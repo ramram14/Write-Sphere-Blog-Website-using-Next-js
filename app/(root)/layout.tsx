@@ -8,7 +8,7 @@ export default function RootLayout({
   return (
     <>
       <Navbar />
-      <main className='min-h-dvh w-screen max-w-2xl mx-auto'>
+      <main className='min-h-dvh w-screen max-w-4xl mx-auto'>
         {children}
       </main>
     </>

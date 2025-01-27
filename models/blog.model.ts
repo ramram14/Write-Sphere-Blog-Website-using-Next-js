@@ -3,14 +3,23 @@ import mongoose from 'mongoose';
 const blogSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    minLength: 5,
+    maxLength: 30
+  },
+  subtitle: {
+    type: String,
+    required: true,
+    minLength: 5,
+    maxLength: 30
   },
   image: {
     type: String
   },
   content: {
     type: String,
-    required: true
+    required: true,
+    minLength: 10
   },
   slug: {
     type: String,

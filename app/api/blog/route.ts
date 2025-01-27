@@ -74,7 +74,6 @@ export const POST = async (req: NextRequest) => {
     const formData = await req.formData();
     const fields = Object.fromEntries(formData);
     CreateBlogSchema.parse(fields);
-
     const imageUrl = await uploadImage(fields.image as File);
     const slug = await generateSlug(fields.title as string);
     const newBlog = new Blog({

@@ -5,6 +5,7 @@ import { ZodError } from 'zod'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import Blog from '@/models/blog.model';
 import slugify from 'slugify';
+import moment from 'moment';
 
 interface DecodedToken extends JwtPayload {
   _id: string;
@@ -94,3 +95,19 @@ export const generateSlug = async (title: string) => {
     throw new Error('Failed to generate unique slug');
   }
 }
+
+
+export const formatTimeAgo = (date: Date) => {
+  return moment(date).fromNow();
+};
+
+export const formatViews = (views: number) => {
+  if (views >= 1_000_000) {
+    return `${(views / 1_000_000).toFixed(1)}M views`;
+  } else if (views >= 1_000) {
+    return `${(views / 1_000).toFixed(1)}K views`;
+  } else {
+    return views;
+  }
+};
+

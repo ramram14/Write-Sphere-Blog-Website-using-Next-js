@@ -6,6 +6,7 @@ import { createCommentSchema } from '@/lib/validators';
 import Blog from '@/models/blog.model';
 connectDb();
 
+
 export const POST = async (req: NextRequest, {
   params
 }: {
