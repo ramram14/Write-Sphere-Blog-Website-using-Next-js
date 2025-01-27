@@ -34,10 +34,7 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
-  commentLikes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment'
-  }]
+
 }, {
   timestamps: true
 })
