@@ -34,10 +34,6 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
-  comments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Comment'
-  }],
   commentLikes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment'
