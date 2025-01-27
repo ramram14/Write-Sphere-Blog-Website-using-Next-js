@@ -16,11 +16,14 @@ export default async function Page() {
             href={`/${item.slug}`}
             className='flex min-h-36 h-36 relative gap-2 items-start justify-between border-b-2 p-2 hover:bg-slate-100'
           >
-            <div className='space-y-2'>
+            <div className='space-y-2  w-full'>
               <h1 className='text-sm'>by @{item.author.username}</h1>
               <h1 className='font-bold text-lg md:text-xl lg:text-2xl'>{item.title}</h1>
               <h1 className='text-slate-700'>{item.subtitle}</h1>
-              <p className='text-xs text-slate-700'>{formatTimeAgo(new Date(item.createdAt))}</p>
+              <div className='flex justify-between text-xs text-slate-700'>
+                <p>{formatTimeAgo(new Date(item.createdAt))}</p>
+                <p>{item.views} Views</p>
+              </div>
             </div>
 
             <div className='my-auto max-w-40 md:max-w-48 lg:min-w-56'>

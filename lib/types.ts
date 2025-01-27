@@ -14,6 +14,7 @@ export interface blogData {
   subtitle: string;
   content: string;
   slug: string;
+  category: string;
   image: string;
   views: number;
   createdAt: string;
