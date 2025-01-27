@@ -46,3 +46,6 @@ export const updateBlogSchema = z.object({
   content: string().min(10, 'Must be at least 10 characters long').optional(),
   category: z.enum(['Lifestyle', 'Hobby', 'Finance', 'Health', 'Philosophy', 'Technology', 'Self Improvement', 'Food', 'Education', 'Entertainment']).optional(),
 })
+export const createCommentSchema = z.object({
+  content: string().max(1000, 'Must be at most 1000 characters')
+})
