@@ -16,7 +16,7 @@ export default async function Page({
   const blog = await getBlogBySlug(slug) as blogData
   if (!blog) return notFound()
 
-  // console.log(blog)
+  console.log(blog)
   return (
     <section className='min-h-dvh space-y-2 md:space-y-4 mt-4'>
       <p className='text-sm text-slate-600'>{blog.category}</p>
