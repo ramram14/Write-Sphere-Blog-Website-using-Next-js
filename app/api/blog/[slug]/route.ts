@@ -28,13 +28,7 @@ export const GET = async (req: NextRequest, {
         path: 'author',
         select: '_id fullName username profileImage'
       })
-      .populate({
-        path: 'comments',
-        populate: {
-          path: 'author',
-          select: '_id username profileImage',
-        }
-      }).sort({ createdAt: -1 });
+      .sort({ createdAt: -1 });
 
     if (!blog) {
       return NextResponse.json({
@@ -44,7 +38,6 @@ export const GET = async (req: NextRequest, {
         status: 404
       })
     }
-
     return NextResponse.json({
       success: true,
       message: 'Blog fetched successfully',

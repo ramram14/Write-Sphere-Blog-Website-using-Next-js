@@ -7,6 +7,26 @@ import Blog from '@/models/blog.model';
 connectDb();
 
 
+// Get comment by blog id
+export const GET = async (req: NextRequest, {
+  params
+}: {
+  params: Promise<{
+    _id: string
+  }>
+}) => {
+  try {
+    const _id = (await params)._id
+    const comment = await Comment.findOne({ blog: _id })
+    return NextResponse.json({
+      success: true,
+      message: 'Comment fetched successfully',
+      data: comment
+    })
+  } catch (error) {
+    return handleErrorHttp(error)
+  }
+}
 export const POST = async (req: NextRequest, {
   params
 }: {
@@ -28,7 +48,7 @@ export const POST = async (req: NextRequest, {
       })
     }
 
-    const blog = await Blog.findOne({ _id })
+    const blog = await Blog.exists({ _id })
     if (!blog) {
       return NextResponse.json({
         success: false,
@@ -47,8 +67,7 @@ export const POST = async (req: NextRequest, {
       author: userId,
       blog: _id
     })
-    blog.comments.push(comment._id);
-    await Promise.all([comment.save(), blog.save()])
+    await comment.save()
     return NextResponse.json({
       success: true,
       message: 'Comment post successfully',
@@ -163,18 +182,7 @@ export const DELETE = async (req: NextRequest, {
       })
     }
 
-    const deleteComment = Comment.deleteOne({ _id })
-
-    // Find the blog that has this comment and remove the comment id from its comments array
-    const deleteCommentOnBlog = Blog.updateOne({
-      _id: comment.blog
-    }, {
-      $pull: {
-        comments: _id
-      }
-    })
-
-    await Promise.all([deleteComment, deleteCommentOnBlog])
+    await Comment.deleteOne({ _id })
 
     return NextResponse.json({
       success: true,
