@@ -40,6 +40,7 @@ export const POST = async (req: NextRequest) => {
       data: {
         fullname: user.fullname,
         username: user.username,
+        email: user.email
       }
     }, {
       status: 201

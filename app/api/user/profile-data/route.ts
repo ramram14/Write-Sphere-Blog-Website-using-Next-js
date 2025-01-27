@@ -46,7 +46,8 @@ export const PATCH = async (req: NextRequest) => {
       data: {
         fullname: user.fullname,
         username: user.username,
-        profileImage: user.profileImage
+        profileImage: user.profileImage,
+        email: user.email
       }
     }, {
       status: 200

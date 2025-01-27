@@ -40,7 +40,8 @@ export const POST = async (req: NextRequest) => {
       data: {
         fullname: existedUser.fullname,
         username: existedUser.username,
-        profileImage: existedUser.profileImage
+        profileImage: existedUser.profileImage,
+        email: existedUser.email
       }
     }, {
       status: 200
