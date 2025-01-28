@@ -8,7 +8,7 @@ const pageDirection = [
   },
   {
     title: 'My Post',
-    url: '/my-post'
+    url: '/profile/my-post'
   }
 ]
 

@@ -1,5 +1,5 @@
 import { formatTimeAgo } from '@/helpers/utils';
-import { getAllBlogs } from '@/lib/actions'
+import { getAllBlogs } from '@/lib/action/blog.action';
 import { blogData } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,7 +8,6 @@ export default async function Page() {
   const { success, message, data } = await getAllBlogs()
 
   if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
-
   const blog = data as blogData[]
 
   return (

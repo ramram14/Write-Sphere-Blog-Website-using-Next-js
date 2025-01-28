@@ -1,6 +1,6 @@
 import CommentContainer from '@/components/comment'
 import DisplayContent from '@/components/textEditor/DisplayContent'
-import { getBlogBySlug } from '@/lib/actions'
+import { getBlogBySlug } from '@/lib/action/blog.action'
 import { blogData } from '@/lib/types'
 import moment from 'moment'
 import Image from 'next/image'

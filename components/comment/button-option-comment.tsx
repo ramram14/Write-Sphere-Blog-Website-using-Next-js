@@ -1,11 +1,11 @@
 'use client'
 
-import { deleteComment, toggleLikeCommentButton } from '@/lib/actions'
 import { useUserStore } from '@/store/user.store'
 import { EllipsisVertical, ThumbsUp } from 'lucide-react'
 import { useActionState, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
+import { deleteComment, toggleLikeCommentButton } from '@/lib/action/comment.action'
 
 export function LikeButton({
   likeUsers,

@@ -1,9 +1,9 @@
 import { commentData } from '@/lib/types'
 import FormComment from './form-comment'
 import Image from 'next/image'
-import { getCommentByBlogId } from '@/lib/actions'
 import { formatTimeAgo } from '@/helpers/utils'
 import { LikeButton, OptionButtonComment } from './button-option-comment'
+import { getCommentByBlogId } from '@/lib/action/comment.action'
 
 export default async function CommentContainer({
   blogId,

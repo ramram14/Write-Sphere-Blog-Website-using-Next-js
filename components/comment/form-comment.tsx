@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Loader, UserIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useActionState, useState } from 'react'
-import { createComment } from '@/lib/actions'
+import { createComment } from '@/lib/action/comment.action'
 export default function FormComment({ blogId }: { blogId: string }) {
   const { user, isAuthenticated } = useUserStore()
   const [commentInput, setCommentInput] = useState('')
