@@ -4,6 +4,8 @@ import { cookies } from 'next/headers';
 import { axiosInstance } from '../axios';
 import { blogData } from '../types';
 import { handleAxiosError } from '../utils';
+import { getUserId } from './user.action';
+import { revalidatePath } from 'next/cache';
 
 
 
@@ -37,9 +39,27 @@ export const getBlogBySlug = async (slug: string): Promise<{
   }
 }
 
-export const getBlogByAuthor = async () => {
+export const getBlogByAuthor = async ():
+  Promise<{
+    success: boolean;
+    message: string;
+    data?: blogData
+  }> => {
   try {
+    const userId = await getUserId();
+    if (!userId) {
+      return {
+        success: false,
+        message: 'Unauthorized - Please Sign In First'
+      }
+    }
 
+    const { data } = await axiosInstance.get(`/blog/author/${userId}`)
+    return {
+      success: true,
+      message: 'Blogs fetched successfully',
+      data: data.data
+    }
   } catch (error) {
     return handleAxiosError(error);
   }
@@ -64,6 +84,25 @@ export const createBlog = async (
       message: 'Blog created successfully',
       data
     })
+  } catch (error) {
+    return handleAxiosError(error);
+  }
+}
+
+export const deleteBlog = async (
+  prevState: unknown,
+  formData: FormData
+) => {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
+    await axiosInstance.delete(`/blog/${formData.get('slugBlog')}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Cookie: `${cookieStore}`,
+      }
+    });
+    revalidatePath('(root)/profile/my-post');
   } catch (error) {
     return handleAxiosError(error);
   }

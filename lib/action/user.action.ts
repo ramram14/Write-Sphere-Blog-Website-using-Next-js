@@ -1,15 +1,17 @@
 'use server';
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { handleAxiosError } from '../utils';
 import { axiosInstance } from '../axios';
-export const getAuth = async () => {
+export const getUserId = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
   if (!token) {
     return null
   }
-  return token
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY!);
+  return (decodedToken as JwtPayload)?._id;
 }
 
 export const signUp = async (

@@ -145,6 +145,7 @@ export const DELETE = async (req: NextRequest, {
     const token = req.cookies.get(process.env.USER_TOKEN_NAME!);
     const userId = await getDataFromToken(token);
     const slug = (await params).slug;
+    console.log(slug)
     const blog = await Blog.findOne({ slug });
     if (!blog) {
       return NextResponse.json({

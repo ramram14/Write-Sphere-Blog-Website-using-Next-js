@@ -19,8 +19,9 @@ export default async function CommentContainer({
   return (
     <div className='pb-72'>
       <hr />
-      <FormComment blogId={blogId} />
+      <hr />
       <p>{comments.length} Comments</p>
+      <FormComment blogId={blogId} />
       <br />
       {comments.map((comment) => (
         <div key={comment._id} className='flex gap-4 items-start border-y pb-2'>
