@@ -14,18 +14,26 @@ export const formatZodErrorMessage = (fieldname: string) => {
     .replace(/^./, (str) => str.toUpperCase());
 }
 
-export const handleAxiosError = (error: AxiosError | unknown) => {
-  // toast.dismiss()
+export const handleAxiosError = (error: AxiosError | unknown): { success: boolean, message: string } => {
   if (error instanceof AxiosError) {
     if (error.response && error.response.data && (error.response.data as { message: string }).message) {
       console.log(error.response.data.message)
-      return error.response.data.meessage
+      return {
+        success: false,
+        message: error.response.data.message
+      }
     } else {
-      return error.message
+      console.log(error.message)
+      return {
+        success: false,
+        message: error.message
+      }
     }
   } else {
     console.log(error)
-    return error
-    // toast.error('An unknown error occurred')
+    return {
+      success: false,
+      message: error as string
+    }
   }
 }

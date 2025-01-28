@@ -5,13 +5,11 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
     minLength: 5,
-    maxLength: 30
   },
   subtitle: {
     type: String,
     required: true,
     minLength: 5,
-    maxLength: 30
   },
   image: {
     type: String

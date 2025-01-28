@@ -36,7 +36,7 @@ export const updateProfileDataSchema = z.object({
 })
 export const CreateBlogSchema = z.object({
   title: string().min(5, 'Must be at least 5 characters long'),
-  subtitle: string().min(5, 'Must be at least 5 characters long').max(30, 'Must be at most 30 characters long'),
+  subtitle: string().min(5, 'Must be at least 5 characters long'),
   image: validateFile(),
   content: string().min(10, 'Must be at least 10 characters long'),
   category: z.enum(['Lifestyle', 'Hobby', 'Finance', 'Health', 'Philosophy', 'Technology', 'Self Improvement', 'Food', 'Education', 'Entertainment'])

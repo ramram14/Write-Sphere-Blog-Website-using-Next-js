@@ -1,4 +1,5 @@
 import CommentContainer from '@/components/comment'
+import DisplayContent from '@/components/textEditor/DisplayContent'
 import { getBlogBySlug } from '@/lib/actions'
 import { blogData } from '@/lib/types'
 import moment from 'moment'
@@ -13,10 +14,11 @@ export default async function Page({
   }>
 }) {
   const slug = (await params).slug
-  const blog = await getBlogBySlug(slug) as blogData
-  if (!blog) return notFound()
+  const { success, message, data } = await getBlogBySlug(slug)
+  const blog = data as blogData
+  if (success && !blog) return notFound()
+  if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
 
-  console.log(blog)
   return (
     <section className='min-h-dvh space-y-2 md:space-y-4 mt-4'>
       <p className='text-sm text-slate-600'>{blog.category}</p>
@@ -45,15 +47,16 @@ export default async function Page({
           alt={`${blog.title} Image`}
           width={300}
           height={170}
+          priority
           sizes='(max-width: 768px) 75vw, (max-width: 1200px) 33vw, 22vw'
           className="rounded-lg object-cover w-full aspect-video"
         />
       </div>
       <hr />
       <div>
-        <p>{blog.content}</p>
+        <DisplayContent content={blog.content} />
       </div>
-      <CommentContainer comments={blog.comments} />
+      <CommentContainer blogId={blog._id} />
     </section>
   )
 }

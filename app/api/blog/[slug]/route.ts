@@ -28,7 +28,6 @@ export const GET = async (req: NextRequest, {
         path: 'author',
         select: '_id fullName username profileImage'
       })
-      .sort({ createdAt: -1 });
 
     if (!blog) {
       return NextResponse.json({
@@ -38,10 +37,27 @@ export const GET = async (req: NextRequest, {
         status: 404
       })
     }
+
+    const comments = await Blog.aggregate([
+      { $match: { _id: blog._id } },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: '_id',
+          foreignField: 'blog',
+          as: 'comments'
+        }
+      },
+    ])
+    const blogData = Blog.hydrate({
+      ...blog.toObject(),
+      comments: comments[0]?.comments
+    })
+
     return NextResponse.json({
       success: true,
       message: 'Blog fetched successfully',
-      data: blog
+      data: blogData
     }, {
       status: 200
     })

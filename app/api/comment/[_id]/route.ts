@@ -17,7 +17,21 @@ export const GET = async (req: NextRequest, {
 }) => {
   try {
     const _id = (await params)._id
-    const comment = await Comment.findOne({ blog: _id })
+    const comment = await Comment.find({ blog: _id })
+      .populate({
+        path: 'author',
+        select: 'username profileImage'
+      })
+      .sort({ createdAt: -1 })
+    const blog = await Blog.exists({ _id })
+    if (!blog) {
+      return NextResponse.json({
+        success: false,
+        message: 'Blog not found'
+      }, {
+        status: 404
+      })
+    }
     return NextResponse.json({
       success: true,
       message: 'Comment fetched successfully',
@@ -161,7 +175,6 @@ export const DELETE = async (req: NextRequest, {
         status: 401
       })
     }
-
     const comment = await Comment.findOne({ _id })
     if (!comment) {
       return NextResponse.json({

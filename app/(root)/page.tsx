@@ -5,8 +5,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default async function Page() {
-  const blog = await getAllBlogs() as blogData[];
-  console.log(blog)
+  const { success, message, data } = await getAllBlogs()
+
+  if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
+
+  const blog = data as blogData[]
+
   return (
     <section className='min-h-dvh'>
       {

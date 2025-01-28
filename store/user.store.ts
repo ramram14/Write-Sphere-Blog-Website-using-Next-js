@@ -2,6 +2,7 @@ import { axiosInstance } from '@/lib/axios';
 import { userStoreData } from '@/lib/types';
 import { handleAxiosError } from '@/lib/utils';
 import { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 import { create } from 'zustand';
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -17,6 +18,8 @@ interface IUserStore {
   signUp(formData: FormData, onSuccess: () => void): Promise<string | undefined | AxiosError | unknown>;
   signIn(formData: FormData, onSuccess: () => void): Promise<string | undefined | AxiosError | unknown>;
   signOut(onSuccess?: () => void): Promise<void>;
+  updateProfile(formData: FormData): Promise<{ success?: boolean, message?: string }>;
+  deleteImage(): Promise<{ success?: boolean, message?: string }>;
 }
 
 export const useUserStore = create<IUserStore>()(
@@ -88,6 +91,44 @@ export const useUserStore = create<IUserStore>()(
           onSuccess?.()
         } catch (error: AxiosError | unknown) {
           handleAxiosError(error)
+        } finally {
+          set({ isLoading: false })
+        }
+      },
+
+      updateProfile: async (formData: FormData) => {
+        try {
+          set({ isLoading: true })
+          const { data } = await axiosInstance.patch('/user/profile-data', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
+          set({
+            user: data.data
+          })
+          toast.dismiss()
+          toast.success(data.message)
+          return { success: true, message: data.message }
+        } catch (error) {
+          return handleAxiosError(error)
+        } finally {
+          set({ isLoading: false })
+        }
+      },
+
+      deleteImage: async () => {
+        try {
+          set({ isLoading: true })
+          const { data } = await axiosInstance.delete('/user/profile-image')
+          set({
+            user: data.data
+          })
+          toast.dismiss()
+          toast.success(data.message)
+          return { success: true, message: data.message }
+        } catch (error) {
+          return handleAxiosError(error)
         } finally {
           set({ isLoading: false })
         }

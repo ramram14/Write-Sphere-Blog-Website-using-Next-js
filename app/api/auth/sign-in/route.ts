@@ -38,6 +38,7 @@ export const POST = async (req: NextRequest) => {
       success: true,
       message: 'User sign in successfully',
       data: {
+        _id: existedUser._id,
         fullname: existedUser.fullname,
         username: existedUser.username,
         profileImage: existedUser.profileImage,

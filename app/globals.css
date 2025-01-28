@@ -6,6 +6,26 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.prose h5 {
+  @apply text-xl font-semibold mt-4 mb-2;
+  /* Ukuran dan font untuk Heading 5 */
+}
+
+.prose h6 {
+  @apply text-lg font-medium mt-4 mb-2;
+  /* Ukuran dan font untuk Heading 6 */
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  margin-bottom: 0.5rem;
+  /* Mengatur jarak setelah heading */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -34,6 +54,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -66,6 +87,7 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

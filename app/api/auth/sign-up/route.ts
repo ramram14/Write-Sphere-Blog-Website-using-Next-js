@@ -38,6 +38,7 @@ export const POST = async (req: NextRequest) => {
       success: true,
       message: 'User sign up successfully',
       data: {
+        _id: user._id,
         fullname: user.fullname,
         username: user.username,
         email: user.email
