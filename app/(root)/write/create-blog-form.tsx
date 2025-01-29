@@ -8,7 +8,7 @@ import { blogCategories } from '@/lib/constants';
 import dynamic from 'next/dynamic';
 const Tiptap = dynamic(() => import('@/components/textEditor/Tiptap'), { ssr: false })
 import { Button } from '@/components/ui/button';
-import { createBlog } from '@/lib/actions';
+import { createBlog } from '@/lib/action/blog.action';
 import { LoaderCircle } from 'lucide-react';
 
 
@@ -46,6 +46,7 @@ export function CreateBlogForm() {
         id='title'
         name='title'
         type='text'
+        placeholder='The Importance of Clean Code in Software Development'
         required
         minLength={5}
         onChange={(e) => setTitle(e.target.value)}
@@ -56,6 +57,7 @@ export function CreateBlogForm() {
         id='subtitle'
         name='subtitle'
         type='text'
+        placeholder='How Writing Readable and Maintainable Code Leads to Long-Term Success'
         required
         minLength={5}
         onChange={(e) => setSubtitle(e.target.value)}

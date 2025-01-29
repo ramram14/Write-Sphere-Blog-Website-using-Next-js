@@ -1,5 +1,6 @@
 'use client'
 
+import EditProfileDataModal from '@/components/profile/edit-profile-data-modal';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/user.store'
 import { EllipsisVertical, Loader, Pencil, Save, Trash, UserIcon } from 'lucide-react'
@@ -7,6 +8,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+
 
 export function ProfileImage() {
   const { user, isAuthenticated, updateProfile, deleteImage, isLoading } = useUserStore();
@@ -104,7 +106,15 @@ export function ProfileImage() {
 
 export function ProfileData() {
   const { user, isAuthenticated, signOut } = useUserStore();
+  const [editField, setEditField] = useState<{ key: string; value: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
+
+  const openModal = (key: string, value: string) => {
+    setEditField({ key, value });
+    setIsModalOpen(true);
+  };
+
   return (
     <div className='space-y-4'>
       {
@@ -115,22 +125,21 @@ export function ProfileData() {
                 <span className='text-sm font-medium'>Fullname</span>
                 <h1>{user?.fullname}</h1>
               </div>
-              <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} />
+              <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} onClick={() => openModal('fullname', user?.fullname || '')} />
             </div>
-
             <div className='flex items-center justify-between'>
               <div className='font-semibold'>
                 <span className='text-sm font-medium'>Username</span>
                 <h1>{user?.username}</h1>
               </div>
-              <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} />
+              <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} onClick={() => openModal('username', user?.username || '')} />
             </div>
             <div className='flex items-center justify-between'>
               <div className='font-semibold'>
                 <span className='text-sm font-medium'>Email</span>
                 <h1>{user?.email}</h1>
               </div>
-              <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} />
+              <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} onClick={() => openModal('email', user?.email || '')} />
             </div>
           </div>
         ) : (
@@ -139,6 +148,14 @@ export function ProfileData() {
           </div>
         )
       }
+      {/* Modal */}
+      {isModalOpen && editField && (
+        <EditProfileDataModal
+          onClose={() => setIsModalOpen(false)}
+          name={editField.key}
+          defaultValue={editField.value}
+        />
+      )}
 
       <Button
         type='button'

@@ -28,14 +28,13 @@ export const createComment = async (
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
-    const { data } = await axiosInstance.post(`/comment/${formData.get('blogId')}`, formData, {
+    await axiosInstance.post(`/comment/${formData.get('blogId')}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
         Cookie: `${cookieStore}`,
       }
     });
-    console.log(data)
     revalidatePath('/[slug]');
   } catch (error) {
     return handleAxiosError(error);

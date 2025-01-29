@@ -5,13 +5,17 @@ import { Input } from '../ui/input'
 import Image from 'next/image'
 import { Loader, UserIcon } from 'lucide-react'
 import { Button } from '../ui/button'
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { createComment } from '@/lib/action/comment.action'
 export default function FormComment({ blogId }: { blogId: string }) {
   const { user, isAuthenticated } = useUserStore()
   const [commentInput, setCommentInput] = useState('')
   const [data, action, isPending] = useActionState(createComment, undefined)
-
+  useEffect(() => {
+    if (!isPending && !data) {
+      setCommentInput('');
+    }
+  }, [isPending, data]);
 
   return (
     <div>
