@@ -9,14 +9,14 @@ export default function NavSearch() {
   const [inputSearch, setInputSearch] = useState(searchParams.get('search') || '')
   const router = useRouter();
   return (
-    <form className='w-full' onSubmit={(e) => {
+    <form className='w-full flex-1' onSubmit={(e) => {
       e.preventDefault()
       router.replace(`/?search=${inputSearch}`)
     }}>
       <Input
         type='search'
         placeholder='Search...'
-        className='w-full'
+        className='w-full  dark:bg-muted'
         onChange={(e) => setInputSearch(e.target.value)}
       />
     </form>

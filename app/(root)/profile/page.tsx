@@ -25,6 +25,7 @@ export default function Page() {
             <ProfileData />
           </Suspense>
         </div>
+
       </section>
     </>
   )

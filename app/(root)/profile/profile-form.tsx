@@ -1,5 +1,6 @@
 'use client'
 
+import DeleteProfileModal from '@/components/profile/delete-profile-modal';
 import EditProfileDataModal from '@/components/profile/edit-profile-data-modal';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/user.store'
@@ -109,12 +110,13 @@ export function ProfileImage() {
 export function ProfileData() {
   const { user, isAuthenticated, signOut } = useUserStore();
   const [editField, setEditField] = useState<{ key: string; value: string } | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateDataModalOpen, setIsUpdateDataModalOpen] = useState(false);
+  const [isDeleteAccountMOdalOpen, setIsDeleteAccountMOdalOpen] = useState(false);
   const router = useRouter();
 
   const openModal = (key: string, value: string) => {
     setEditField({ key, value });
-    setIsModalOpen(true);
+    setIsUpdateDataModalOpen(true);
   };
 
   return (
@@ -143,6 +145,7 @@ export function ProfileData() {
               </div>
               <Pencil className='p-1  cursor-pointer hover:bg-slate-300 hover:fill-slate-400' size={30} onClick={() => openModal('email', user?.email || '')} />
             </div>
+
           </div>
         ) : (
           <div className='flex items-center justify-center min-h-48'>
@@ -151,9 +154,9 @@ export function ProfileData() {
         )
       }
       {/* Modal */}
-      {isModalOpen && editField && (
+      {isUpdateDataModalOpen && editField && (
         <EditProfileDataModal
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsUpdateDataModalOpen(false)}
           name={editField.key}
           defaultValue={editField.value}
         />
@@ -173,6 +176,25 @@ export function ProfileData() {
       >
         {isAuthenticated ? 'Sign out' : 'Sign in'}
       </Button>
+
+      {
+        isAuthenticated && (
+
+          <div className='pt-10 w-full flex justify-end'>
+            <Button
+              type='button'
+              onClick={() => setIsDeleteAccountMOdalOpen(true)}
+            >
+              Delete Account
+            </Button>
+          </div>
+        )}
+
+      {
+        isDeleteAccountMOdalOpen && (
+          <DeleteProfileModal onClose={() => setIsDeleteAccountMOdalOpen(false)} />
+        )
+      }
     </div>
   )
 }

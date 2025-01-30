@@ -20,6 +20,7 @@ interface IUserStore {
   signOut(onSuccess?: () => void): Promise<void>;
   updateProfile(formData: FormData): Promise<{ success?: boolean, message?: string }>;
   deleteImage(): Promise<{ success?: boolean, message?: string }>;
+  deleteAccount(formData: FormData): Promise<{ success: boolean, message: string }>
 }
 
 export const useUserStore = create<IUserStore>()(
@@ -127,6 +128,26 @@ export const useUserStore = create<IUserStore>()(
           toast.dismiss()
           toast.success(data.message)
           return { success: true, message: data.message }
+        } catch (error) {
+          return handleAxiosError(error)
+        } finally {
+          set({ isLoading: false })
+        }
+      },
+      deleteAccount: async (formData: FormData) => {
+        try {
+          set({ isLoading: true })
+          const { data } = await axiosInstance.delete('/auth/delete-account', {
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          })
+          set({
+            user: null,
+            isAuthenticated: false
+          })
+          return data
         } catch (error) {
           return handleAxiosError(error)
         } finally {
