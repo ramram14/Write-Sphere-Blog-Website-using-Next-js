@@ -27,17 +27,42 @@ export const createComment = async (
 ) => {
   try {
     const blogId = formData.get('blogId')
-    const commentId = formData.get('commentId')
     const cookieStore = await cookies();
     const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
-    await axiosInstance.post(`/comment/${blogId}?${commentId ? `parentComment=${commentId}` : ''}`, formData, {
+    await axiosInstance.post(`/comment/${blogId}}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
         Cookie: `${cookieStore}`,
       }
     });
-    revalidatePath('/[slug]');
+    revalidatePath('(root)/[slug]');
+  } catch (error) {
+    return handleAxiosError(error);
+  }
+}
+
+export const createBlogReplies = async (
+  prevState: unknown,
+  formData: FormData
+) => {
+  try {
+    const blogId = formData.get('blogId')
+    const parentCommentId = formData.get('parentComment')
+    const cookieStore = await cookies();
+    const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
+    await axiosInstance.post(`/comment/${blogId}?parentComment=${parentCommentId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+        Cookie: `${cookieStore}`,
+      }
+    });
+    revalidatePath('(root)/[slug]');
+    return {
+      success: true,
+      message: 'Comment updated successfully'
+    }
   } catch (error) {
     return handleAxiosError(error);
   }
@@ -62,7 +87,7 @@ export const editComment = async (
         Cookie: `${cookieStore}`,
       }
     })
-    revalidatePath('/[slug]');
+    revalidatePath('(root)/[slug]');
     return {
       success: true,
       message: 'Comment edited successfully',

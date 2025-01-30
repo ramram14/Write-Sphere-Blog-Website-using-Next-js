@@ -1,27 +1,40 @@
 'use client'
 
 import { useUserStore } from '@/store/user.store'
-import { EllipsisVertical, ThumbsUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, EllipsisVertical, Loader, ThumbsUp } from 'lucide-react'
 import { useActionState, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
-import { deleteComment } from '@/lib/action/comment.action'
+import { createBlogReplies, deleteComment } from '@/lib/action/comment.action'
 import { axiosInstance } from '@/lib/axios'
 import { handleAxiosError } from '@/lib/utils'
 import EditCommentModal from './edit-comment-modal'
+import { Textarea } from '../ui/textarea'
 
-export function LikeButton({
+export function LikeButtonAndAnswerComment({
   likeUsers,
   commentId,
-  parentComment
+  blogId,
+  isChild = false
 }: {
   likeUsers: string[];
   commentId: string;
-  parentComment?: string
+  blogId: string;
+  isChild?: boolean
 }) {
   const { user, isAuthenticated } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [isInputAnswerVisible, setIsInputAnswerVisible] = useState(false);
+  const [commentInput, setCommentInput] = useState('')
+  const [data, action, isPending] = useActionState(createBlogReplies, undefined)
+
+
+  useEffect(() => {
+    if (data && data.success) {
+      setIsInputAnswerVisible(false)
+    }
+  }, [data])
+
 
   // Handle klik tombol Like
   const handleLikeClick = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,11 +49,9 @@ export function LikeButton({
     } else {
       likeUsers.push(user?._id ?? '');
     }
-    const formData = new FormData();
-    formData.append('commentId', commentId);
     try {
       setIsLoading(true);
-      await axiosInstance.post(`/comment/like/${commentId}?parentComment=${parentComment ?? null}`, formData);
+      await axiosInstance.post(`/comment/like/${commentId}`);
     } catch (error) {
       const index = likeUsers.indexOf(user?._id ?? '');
       if (index !== -1) {
@@ -70,13 +81,56 @@ export function LikeButton({
           />
           <p>{likeUsers.length}</p>
         </Button>
-        <p className='text-sm text-blue-600 cursor-pointer hover:underline'
-          onClick={() => setIsInputAnswerVisible(!isInputAnswerVisible)}
-        >
-          Answer
-        </p>
+        {
+          !isChild && (
+            <p className='text-sm text-blue-900 cursor-pointer hover:underline flex items-center gap-2'
+              onClick={() => setIsInputAnswerVisible(!isInputAnswerVisible)}
+            >
+              {isInputAnswerVisible ? <ChevronUp /> : <ChevronDown />}Answer
+            </p>
+          )
+        }
+
+        {/* Answer form */}
       </form>
 
+
+
+      {isInputAnswerVisible && (
+        <form className='py-2' action={action}>
+          <input type="text" name="parentComment" defaultValue={commentId} hidden />
+          <input type="text" name='blogId' defaultValue={blogId} hidden />
+          <Textarea
+            placeholder='Write your answer here'
+            className='w-full'
+            value={commentInput}
+            onChange={(e) => setCommentInput(e.target.value)}
+            name='content'
+            id='content'
+          />
+
+          <div className={`flex gap-2 justify-end mt-2 ${commentInput ? '' : 'hidden'}`}>
+            <Button
+              type='button'
+              variant={'outline'}
+              className='p-1 md:p-2 bg-red-500 hover:bg-red-600'
+              onClick={() => setIsInputAnswerVisible(false)}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              type='submit'
+              // onClick={handleCreateRepliesComment}
+              variant={'outline'}
+              className='p-1 md:p-2'
+              disabled={isPending}
+            >
+              Comment {isPending && <Loader className='animate-spin' />}
+            </Button>
+          </div>
+        </form>
+      )}
     </>
   );
 }
@@ -86,7 +140,7 @@ export function LikeButton({
 // Edit comment and Delete comment button is here
 export function OptionButtonComment({
   commentId,
-  initialContent
+  initialContent,
 }: {
   commentId: string;
   initialContent: string

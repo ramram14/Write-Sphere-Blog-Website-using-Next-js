@@ -29,7 +29,7 @@ export interface commentData
   extends z.infer<typeof createCommentSchema> {
   _id: string;
   author: userStoreData;
-  blog: blogData;
+  blog: string;
   parentComment: commentData | null;
   LikeUsers: string[];
   likesNumber: number;

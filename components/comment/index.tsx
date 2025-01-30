@@ -13,7 +13,6 @@ export default async function CommentContainer({
   if (!success) {
     return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
   }
-
   const comments = Array.isArray(data) ? data as commentData[] : [];
   const parentComment = comments.filter((comment) => comment.parentComment === null);
   const childComment = comments.filter((comment) => comment.parentComment !== null);
@@ -24,7 +23,7 @@ export default async function CommentContainer({
       <p>{comments.length} Comments</p>
       <FormComment blogId={blogId} />
       <br />
-      <CommentMap comments={parentComment} childComment={childComment} />
+      <CommentMap comments={parentComment} childComments={childComment} />
     </div>
   )
 }

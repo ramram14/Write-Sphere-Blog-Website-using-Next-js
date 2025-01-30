@@ -17,7 +17,8 @@ export const GET = async (req: NextRequest, {
 }) => {
   try {
     const _id = (await params)._id
-    const comment = await Comment.find({ blog: _id, parentComment: null })
+    const comment = await Comment.find({ blog: _id })
+      .populate('parentComment')
       .populate('author', '_id username profileImage')
       .sort({ createdAt: -1 })
     const blog = await Blog.exists({ _id })
@@ -38,6 +39,7 @@ export const GET = async (req: NextRequest, {
     return handleErrorHttp(error)
   }
 }
+
 export const POST = async (req: NextRequest, {
   params
 }: {

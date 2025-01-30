@@ -92,7 +92,7 @@ export const createBlog = async (
     return ({
       success: true,
       message: 'Blog created successfully',
-      data
+      data: data.data
     })
   } catch (error) {
     return handleAxiosError(error);
