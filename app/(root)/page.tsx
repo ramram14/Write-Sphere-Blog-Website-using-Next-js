@@ -15,7 +15,7 @@ type Props = PageProps & {
 
 
 export default async function Page({ searchParams }: Props) {
-  const { search, category } = searchParams;
+  const { search, category } = await searchParams;
   const response = await getAllBlogs({ search: search || '', category: category || '' });
   if (!response.success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{response.message}</h1>;
   const blog = response.data as blogData[];
@@ -41,6 +41,10 @@ export default async function Page({ searchParams }: Props) {
   return (
     <section className='min-h-dvh'>
       <CategoriesList />
+      {/* <div className='py-5 px-2 border-y-2 bg-slate-50'>
+        <h1 className='font-semibold text-xl'>Welcome back to Write Sphere,</h1>
+        <p>&quot;where your thoughts find their voice through words.&quot;</p>
+      </div> */}
       {
         blog.map((item) => (
           <Link

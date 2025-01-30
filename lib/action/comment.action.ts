@@ -26,9 +26,11 @@ export const createComment = async (
   formData: FormData
 ) => {
   try {
+    const blogId = formData.get('blogId')
+    const commentId = formData.get('commentId')
     const cookieStore = await cookies();
     const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
-    await axiosInstance.post(`/comment/${formData.get('blogId')}`, formData, {
+    await axiosInstance.post(`/comment/${blogId}?${commentId ? `parentComment=${commentId}` : ''}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
@@ -41,21 +43,31 @@ export const createComment = async (
   }
 }
 
-export const toggleLikeCommentButton = async (
+export const editComment = async (
   prevState: unknown,
   formData: FormData
-) => {
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: blogData
+}> => {
   try {
+    const commentId = formData.get('commentId')
     const cookieStore = await cookies();
     const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
-    await axiosInstance.post(`/comment/like/${formData.get('blogId')}`, formData, {
+    const { data } = await axiosInstance.patch(`/comment/${commentId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
         Cookie: `${cookieStore}`,
       }
-    });
-    revalidatePath('(root)/[slug]');
+    })
+    revalidatePath('/[slug]');
+    return {
+      success: true,
+      message: 'Comment edited successfully',
+      data: data.data
+    }
   } catch (error) {
     return handleAxiosError(error);
   }

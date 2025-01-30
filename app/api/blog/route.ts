@@ -39,7 +39,6 @@ export const GET = async (req: NextRequest) => {
           select: '_id fullName username profileImage'
         })
         .sort({ createdAt: -1 });
-      console.log(blogs)
     } else {
 
       // If client doesn't send search or category we fetch all blogs

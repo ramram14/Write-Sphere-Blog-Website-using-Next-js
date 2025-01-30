@@ -17,11 +17,8 @@ export const GET = async (req: NextRequest, {
 }) => {
   try {
     const _id = (await params)._id
-    const comment = await Comment.find({ blog: _id })
-      .populate({
-        path: 'author',
-        select: 'username profileImage'
-      })
+    const comment = await Comment.find({ blog: _id, parentComment: null })
+      .populate('author', '_id username profileImage')
       .sort({ createdAt: -1 })
     const blog = await Blog.exists({ _id })
     if (!blog) {
@@ -49,6 +46,8 @@ export const POST = async (req: NextRequest, {
   }>
 }) => {
   try {
+    const reqQuery = req.nextUrl.searchParams;
+    const parentComment = reqQuery.get('parentComment');
     // _id is blog id, we need it to create comment because it has a relation
     const _id = (await params)._id
     const token = req.cookies.get(process.env.USER_TOKEN_NAME!)
@@ -79,7 +78,8 @@ export const POST = async (req: NextRequest, {
     const comment = new Comment({
       content: fields.content,
       author: userId,
-      blog: _id
+      blog: _id,
+      parentComment: parentComment ?? null
     })
     await comment.save()
     return NextResponse.json({

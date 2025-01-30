@@ -1,13 +1,17 @@
 'use client'
 
 import { useUserStore } from '@/store/user.store'
-import { Input } from '../ui/input'
 import Image from 'next/image'
 import { Loader, UserIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useActionState, useEffect, useState } from 'react'
 import { createComment } from '@/lib/action/comment.action'
-export default function FormComment({ blogId }: { blogId: string }) {
+import { Textarea } from '../ui/textarea'
+export default function FormComment({
+  blogId,
+}: {
+  blogId: string,
+}) {
   const { user, isAuthenticated } = useUserStore()
   const [commentInput, setCommentInput] = useState('')
   const [data, action, isPending] = useActionState(createComment, undefined)
@@ -16,6 +20,7 @@ export default function FormComment({ blogId }: { blogId: string }) {
       setCommentInput('');
     }
   }, [isPending, data]);
+
 
   return (
     <div>
@@ -38,10 +43,10 @@ export default function FormComment({ blogId }: { blogId: string }) {
           )}
         </div>
         <form action={action} id='comment' className='w-full'>
-          <Input
-            type='search'
+          <Textarea
             id='content'
             name='content'
+            placeholder='Write a comment...'
             onChange={(e) => setCommentInput(e.target.value)}
             value={commentInput}
           />
@@ -73,3 +78,4 @@ export default function FormComment({ blogId }: { blogId: string }) {
     </div>
   )
 }
+

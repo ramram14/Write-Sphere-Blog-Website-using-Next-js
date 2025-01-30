@@ -30,6 +30,7 @@ export interface commentData
   _id: string;
   author: userStoreData;
   blog: blogData;
+  parentComment: commentData | null;
   LikeUsers: string[];
   likesNumber: number;
   createdAt: string;

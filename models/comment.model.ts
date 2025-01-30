@@ -15,6 +15,11 @@ const commentSchema = new mongoose.Schema({
     ref: 'Blog',
     required: true
   },
+  parentComment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment', // Self-referencing to Comment model
+    default: null
+  },
   LikeUsers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
@@ -28,7 +33,7 @@ const commentSchema = new mongoose.Schema({
   timestamps: true
 })
 
-commentSchema.index({ blog: 1, author: 1 })
+commentSchema.index({ blog: 1, author: 1, parentComment: 1 });
 
 const Comment = mongoose.models.Comment || mongoose.model('Comment', commentSchema)
 export default Comment;

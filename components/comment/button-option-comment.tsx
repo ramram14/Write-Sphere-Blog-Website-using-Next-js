@@ -5,84 +5,98 @@ import { EllipsisVertical, ThumbsUp } from 'lucide-react'
 import { useActionState, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { Button } from '../ui/button'
-import { deleteComment, toggleLikeCommentButton } from '@/lib/action/comment.action'
+import { deleteComment } from '@/lib/action/comment.action'
+import { axiosInstance } from '@/lib/axios'
+import { handleAxiosError } from '@/lib/utils'
+import EditCommentModal from './edit-comment-modal'
 
 export function LikeButton({
   likeUsers,
-  commentId
+  commentId,
+  parentComment
 }: {
   likeUsers: string[];
   commentId: string;
+  parentComment?: string
 }) {
   const { user, isAuthenticated } = useUserStore();
-  const [data, action, isPending] = useActionState(toggleLikeCommentButton, undefined);
-  const [optimisticLiked, setOptimisticLiked] = useState(false);
-  const [optimisticLikeCount, setOptimisticLikeCount] = useState(likeUsers.length);
-
-  // Sinkronkan state lokal dengan data dari server saat komponen dimuat
-  useEffect(() => {
-    if (isAuthenticated && likeUsers.includes(user?._id ?? '')) {
-      setOptimisticLiked(true);
-    } else {
-      setOptimisticLiked(false);
-    }
-    setOptimisticLikeCount(likeUsers.length);
-  }, [likeUsers, user, isAuthenticated]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isInputAnswerVisible, setIsInputAnswerVisible] = useState(false);
 
   // Handle klik tombol Like
-  const handleLikeClick = async () => {
-    // Optimistic update
-    const wasLiked = optimisticLiked;
-    const newLikeCount = wasLiked ? optimisticLikeCount - 1 : optimisticLikeCount + 1;
-    setOptimisticLiked(!wasLiked);
-    setOptimisticLikeCount(newLikeCount);
-
+  const handleLikeClick = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      toast.error('Please login to give like');
+      return;
+    }
+    const index = likeUsers.indexOf(user?._id ?? '');
+    if (index !== -1) {
+      likeUsers.splice(index, 1);
+    } else {
+      likeUsers.push(user?._id ?? '');
+    }
+    const formData = new FormData();
+    formData.append('commentId', commentId);
     try {
-      // Kirim permintaan ke server
-      const formData = new FormData();
-      formData.append('blogId', commentId);
-      await action(formData);
-
-      if (!data?.success) {
-        setOptimisticLiked(wasLiked);
-        setOptimisticLikeCount(likeUsers.length);
-        toast.error(data?.message);
+      setIsLoading(true);
+      await axiosInstance.post(`/comment/like/${commentId}?parentComment=${parentComment ?? null}`, formData);
+    } catch (error) {
+      const index = likeUsers.indexOf(user?._id ?? '');
+      if (index !== -1) {
+        likeUsers.splice(index, 1);
+      } else {
+        likeUsers.push(user?._id ?? '');
       }
-
-    } catch {
-      setOptimisticLiked(wasLiked);
-      setOptimisticLikeCount(likeUsers.length);
-      toast.error('Failed to update like. Please try again.');
+      const { message } = handleAxiosError(error);
+      toast.dismiss();
+      toast.error(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); handleLikeClick(); }} className='flex items-center'>
-      <input type="text" name="blogId" defaultValue={commentId} hidden />
-      <Button
-        type='submit'
-        disabled={isPending}
-        variant={'ghost'}
-      >
-        <ThumbsUp
-          className={`w-4 h-4 ${optimisticLiked ? 'fill-black' : ''}`}
-        />
-      </Button>
-      <p>{optimisticLikeCount}</p>
-    </form>
+    <>
+      <form className='flex  items-center gap-4' onSubmit={handleLikeClick}>
+        <input type="text" name="commentId" defaultValue={commentId} hidden />
+        <Button
+          type='submit'
+          disabled={isLoading}
+          variant={'ghost'}
+        >
+          <ThumbsUp
+            className={`w-4 h-4 ${likeUsers.includes(user?._id ?? '') ? 'fill-black' : ''}`}
+          />
+          <p>{likeUsers.length}</p>
+        </Button>
+        <p className='text-sm text-blue-600 cursor-pointer hover:underline'
+          onClick={() => setIsInputAnswerVisible(!isInputAnswerVisible)}
+        >
+          Answer
+        </p>
+      </form>
+
+    </>
   );
 }
 
+
+
+// Edit comment and Delete comment button is here
 export function OptionButtonComment({
-  commentId
+  commentId,
+  initialContent
 }: {
-  commentId: string
+  commentId: string;
+  initialContent: string
 }) {
   const [isPopupEditCommentVisible, setIsPopupEditCommentVisible] = useState(false);
-  const [dataDeletefunction, actionDeleteFunction] = useActionState(deleteComment, undefined)
+  const [dataDeletefunction, actionDeleteFunction, isPending] = useActionState(deleteComment, undefined)
+  const [isEditing, setIsEditing] = useState(false);
+
 
   useEffect(() => {
-
     if (dataDeletefunction && dataDeletefunction.success === false) {
       toast.dismiss();
       toast.error(dataDeletefunction.message);
@@ -101,8 +115,12 @@ export function OptionButtonComment({
         <form action="">
           <input type="text" name="blogId" defaultValue={commentId} hidden id="blogId" />
           <button
-            type='submit'
+            type='button'
             className='p-2 hover:bg-slate-300 cursor-pointer w-full text-start'
+            onClick={() => {
+              setIsEditing(true);
+              setIsPopupEditCommentVisible(false);
+            }}
           >
             Edit
           </button>
@@ -113,10 +131,19 @@ export function OptionButtonComment({
             type='submit'
             className='p-2 hover:bg-slate-300 cursor-pointer w-full text-start'
           >
-            Delete
+            {isPending ? 'Deleting...' : 'Delete'}
           </button>
         </form>
       </div>
+      {
+        isEditing &&
+        <EditCommentModal
+          commentId={commentId}
+          onClose={() => setIsEditing(false)}
+          name='comment'
+          defaultValue={initialContent}
+        />
+      }
     </div>
   )
 }
