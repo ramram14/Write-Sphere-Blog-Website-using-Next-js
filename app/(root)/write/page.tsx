@@ -1,4 +1,9 @@
+import { Metadata } from 'next';
 import { CreateBlogForm } from './create-blog-form';
+
+export const metadata: Metadata = {
+  title: 'Write',
+};
 
 export default function Page() {
   return (

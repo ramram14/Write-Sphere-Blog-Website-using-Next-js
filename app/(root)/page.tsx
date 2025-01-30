@@ -1,40 +1,46 @@
+import CategoriesList from '@/components/navbar/categories-list';
 import { Button } from '@/components/ui/button';
 import { formatTimeAgo } from '@/helpers/utils';
 import { getAllBlogs } from '@/lib/action/blog.action';
 import { blogData } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
-
-export default async function Page({
-  searchParams
-}: {
+import { PageProps } from '@/.next/types/app/layout';
+type Props = PageProps & {
   searchParams: {
-    search?: string,
-    category?: string
-  }
-}) {
-  const { search, category } = await searchParams;
+    search?: string;
+    category?: string;
+  };
+};
+
+
+export default async function Page({ searchParams }: Props) {
+  const { search, category } = searchParams;
   const response = await getAllBlogs({ search: search || '', category: category || '' });
   if (!response.success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{response.message}</h1>;
   const blog = response.data as blogData[];
 
   if (!blog.length) return (
-    <div className='flex flex-col items-center justify-center min-h-dvh mt-4'>
-      <h1 className='text-3xl font-bold text-center'>Oops! No Blogs Found</h1>
-      <p className='text-lg text-gray-600'>Try adjusting your search or exploring different categories.</p>
-      <Link href='/'>
-        <Button
-          type='button'
-          variant='default'
-          className='mt-4'>
-          Go To Homepage
-        </Button>
-      </Link>
-    </div>
+    <>
+      <CategoriesList />
+      <div className='flex flex-col items-center justify-center min-h-dvh mt-4'>
+        <h1 className='text-3xl font-bold text-center'>Oops! No Blogs Found</h1>
+        <p className='text-lg text-gray-600'>Try adjusting your search or exploring different categories.</p>
+        <Link href='/'>
+          <Button
+            type='button'
+            variant='default'
+            className='mt-4'>
+            Go To Homepage
+          </Button>
+        </Link>
+      </div>
+    </>
   );
 
   return (
     <section className='min-h-dvh'>
+      <CategoriesList />
       {
         blog.map((item) => (
           <Link
@@ -43,7 +49,10 @@ export default async function Page({
             className='flex flex-wrap md:flex-nowrap min-h-36 h-36 relative gap-2 items-start justify-between border-b-2 p-2 hover:bg-slate-100'
           >
             <div className=' space-y-2 min-w-0 flex-1'>
-              <h1 className='text-sm'>by @{item.author.username}</h1>
+              <div className='flex gap-2 items-center'>
+                <p className='text-xs'>{item.category}</p>
+                <h1 className='text-sm'>by @{item.author.username}</h1>
+              </div>
               <h1 className='font-bold text-lg md:text-xl truncate'>{item.title}</h1>
               <h1 className='text-slate-700 truncate text-xs md:text-sm'>{item.subtitle}</h1>
               <div className='flex justify-between text-xs text-slate-700'>

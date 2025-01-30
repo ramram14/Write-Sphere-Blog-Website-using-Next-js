@@ -11,16 +11,53 @@ export function LikeButton({
   likeUsers,
   commentId
 }: {
-  likeUsers: string[],
-  commentId: string
+  likeUsers: string[];
+  commentId: string;
 }) {
-  const { user, isAuthenticated } = useUserStore()
-  const [data, action, isPending] = useActionState(toggleLikeCommentButton, undefined)
-  if (data && data.success === false) {
-    toast.error(data.message)
-  }
+  const { user, isAuthenticated } = useUserStore();
+  const [data, action, isPending] = useActionState(toggleLikeCommentButton, undefined);
+  const [optimisticLiked, setOptimisticLiked] = useState(false);
+  const [optimisticLikeCount, setOptimisticLikeCount] = useState(likeUsers.length);
+
+  // Sinkronkan state lokal dengan data dari server saat komponen dimuat
+  useEffect(() => {
+    if (isAuthenticated && likeUsers.includes(user?._id ?? '')) {
+      setOptimisticLiked(true);
+    } else {
+      setOptimisticLiked(false);
+    }
+    setOptimisticLikeCount(likeUsers.length);
+  }, [likeUsers, user, isAuthenticated]);
+
+  // Handle klik tombol Like
+  const handleLikeClick = async () => {
+    // Optimistic update
+    const wasLiked = optimisticLiked;
+    const newLikeCount = wasLiked ? optimisticLikeCount - 1 : optimisticLikeCount + 1;
+    setOptimisticLiked(!wasLiked);
+    setOptimisticLikeCount(newLikeCount);
+
+    try {
+      // Kirim permintaan ke server
+      const formData = new FormData();
+      formData.append('blogId', commentId);
+      await action(formData);
+
+      if (!data?.success) {
+        setOptimisticLiked(wasLiked);
+        setOptimisticLikeCount(likeUsers.length);
+        toast.error(data?.message);
+      }
+
+    } catch {
+      setOptimisticLiked(wasLiked);
+      setOptimisticLikeCount(likeUsers.length);
+      toast.error('Failed to update like. Please try again.');
+    }
+  };
+
   return (
-    <form action={action} className='flex items-center'>
+    <form onSubmit={(e) => { e.preventDefault(); handleLikeClick(); }} className='flex items-center'>
       <input type="text" name="blogId" defaultValue={commentId} hidden />
       <Button
         type='submit'
@@ -28,13 +65,12 @@ export function LikeButton({
         variant={'ghost'}
       >
         <ThumbsUp
-          className={`w-4 h-4 
-        ${isAuthenticated && likeUsers.length > 0 && likeUsers.includes(user?._id ?? '') ? 'fill-black' : ''}`}
+          className={`w-4 h-4 ${optimisticLiked ? 'fill-black' : ''}`}
         />
       </Button>
-      <p>{likeUsers.length}</p>
+      <p>{optimisticLikeCount}</p>
     </form>
-  )
+  );
 }
 
 export function OptionButtonComment({
@@ -43,20 +79,15 @@ export function OptionButtonComment({
   commentId: string
 }) {
   const [isPopupEditCommentVisible, setIsPopupEditCommentVisible] = useState(false);
-  const [dataEditFunction, actionEditFunction, isPending] = useActionState(toggleLikeCommentButton, undefined)
   const [dataDeletefunction, actionDeleteFunction] = useActionState(deleteComment, undefined)
 
   useEffect(() => {
-    if (dataEditFunction && dataEditFunction.success === false) {
-      toast.dismiss();
-      toast.error(dataEditFunction.message);
-    }
 
     if (dataDeletefunction && dataDeletefunction.success === false) {
       toast.dismiss();
       toast.error(dataDeletefunction.message);
     }
-  }, [dataEditFunction, dataDeletefunction]);
+  }, [dataDeletefunction]);
   return (
     <div className='relative'>
       <EllipsisVertical

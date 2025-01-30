@@ -22,12 +22,11 @@ export const GET = async (req: NextRequest) => {
           message: 'Search query is too long, maximum length is 15',
         }, { status: 400 });
       }
-
       const searchRegex = {
         $regex: search || category,
         $options: 'i',
       };
-
+      console.log(searchRegex)
       blogs = await Blog.find({
         $or: [
           { title: searchRegex },
@@ -40,6 +39,7 @@ export const GET = async (req: NextRequest) => {
           select: '_id fullName username profileImage'
         })
         .sort({ createdAt: -1 });
+      console.log(blogs)
     } else {
 
       // If client doesn't send search or category we fetch all blogs

@@ -20,7 +20,6 @@ export const getAllBlogs = async ({
   message: string;
   data?: blogData[]
 }> => {
-  console.log(search, category)
   try {
     const { data } = await axiosInstance.get(`/blog?${search ? `search=${search}` : ''}${category ? `&category=${category}` : ''}`)
     return { success: true, message: 'Blogs fetched successfully', data: data.data }

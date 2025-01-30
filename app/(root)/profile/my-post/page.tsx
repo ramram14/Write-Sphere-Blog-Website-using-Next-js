@@ -5,6 +5,12 @@ import moment from 'moment';
 import Image from 'next/image';
 import Link from 'next/link';
 import ButtonOptionBlog from './button-option-blog';
+import { Metadata } from 'next';
+import { Suspense } from 'react';
+
+export const metadata: Metadata = {
+  title: 'My Post',
+};
 
 export default async function Page() {
   const { success, message, data } = await getBlogByAuthor();
@@ -56,7 +62,9 @@ export default async function Page() {
 
               {/* Tombol Opsi */}
               <div className='flex-shrink-0'>
-                <ButtonOptionBlog slugBlog={item.slug} />
+                <Suspense fallback={<div>Loading...</div>}>
+                  <ButtonOptionBlog slugBlog={item.slug} />
+                </Suspense>
               </div>
 
             </div>
