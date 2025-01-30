@@ -12,7 +12,6 @@ export const GET = async (req: NextRequest) => {
     const reqQuery = req.nextUrl.searchParams;
     const search = reqQuery.get('search');
     const category = reqQuery.get('category');
-
     let blogs
 
     // If client sends search or category we search for it
@@ -23,11 +22,17 @@ export const GET = async (req: NextRequest) => {
           message: 'Search query is too long, maximum length is 15',
         }, { status: 400 });
       }
+
+      const searchRegex = {
+        $regex: search || category,
+        $options: 'i',
+      };
+
       blogs = await Blog.find({
         $or: [
-          { title: { $regex: search || category, $options: 'i' } },
-          { content: { $regex: search || category, $options: 'i' } },
-          { category: { $regex: search || category, $options: 'i' } },
+          { title: searchRegex },
+          { content: searchRegex },
+          { category: searchRegex },
         ]
       }, '-content')
         .populate({

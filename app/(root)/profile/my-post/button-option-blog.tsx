@@ -1,8 +1,9 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import { deleteBlog } from '@/lib/action/blog.action'
-import { EllipsisVertical, Loader } from 'lucide-react'
-import { useActionState, useState } from 'react'
+import { Loader } from 'lucide-react'
+import { useActionState } from 'react'
 import toast from 'react-hot-toast'
 
 export default function ButtonOptionBlog({
@@ -11,7 +12,6 @@ export default function ButtonOptionBlog({
   slugBlog: string
 }) {
 
-  const [isPopUpOpen, setIsPopUpOpen] = useState(false)
   const [dataDeleteBlog, actionDeleteBlog, isPending] = useActionState(deleteBlog, undefined)
 
 
@@ -26,24 +26,17 @@ export default function ButtonOptionBlog({
     toast.success(dataDeleteBlog.message)
   }
   return (
-    <div className='relative z-10'>
-      <EllipsisVertical className='p-1 bg-white cursor-pointer  hover:bg-slate-500 ' size={30}
-        onClick={() => setIsPopUpOpen(!isPopUpOpen)}
-      />
 
-      <div
-        onClick={() => setIsPopUpOpen(false)}
-        hidden={isPopUpOpen}
-        className='absolute bg-white border-2 rounded-md border-black overflow-hidden'
+    <form action={actionDeleteBlog} className={' hover:bg-slate-300 p-1 '}>
+      <input type="text" name="slugBlog" hidden defaultValue={slugBlog} />
+      <Button
+        variant={'outline'}
+        type="submit"
+        className='text-sm'
       >
-        <form action={actionDeleteBlog} className={' hover:bg-slate-300 p-1'}>
-          <input type="text" name="slugBlog" hidden defaultValue={slugBlog} />
-          <button type="submit" className='text-sm'>
-            {isPending ? <Loader className='animate-spin' /> : 'Delete'}
-          </button>
-        </form>
-      </div>
-    </div>
+        {isPending ? <Loader className='animate-spin' /> : 'Delete'}
+      </Button>
+    </form>
 
   )
 

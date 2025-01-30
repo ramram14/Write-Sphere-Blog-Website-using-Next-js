@@ -19,9 +19,10 @@ import { useEffect } from 'react'
 
 interface TiptapProps {
   onChange: (content: string) => void
+  content?: string
 }
 
-const Tiptap = ({ onChange }: TiptapProps) => {
+const Tiptap = ({ onChange, content }: TiptapProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -41,7 +42,7 @@ const Tiptap = ({ onChange }: TiptapProps) => {
         class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
       }
     },
-    content: '<p>Hello World! 🌎️</p>',
+    content: content || '<p>Hello World! 🌎️</p>',
   })
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const Tiptap = ({ onChange }: TiptapProps) => {
 
   return (
     <div className='border-2 min-h-96' >
-      <div className="toolbar w-full space-x-2 md:space-x-4 p-2 border-b-2">
+      <div className="toolbar w-full space-x-2 md:space-x-4 p-2 border-b-2 sticky top-0 bg-white z-50">
         <select
           aria-label="Heading Level"
           name="level"

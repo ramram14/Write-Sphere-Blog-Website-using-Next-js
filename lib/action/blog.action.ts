@@ -9,13 +9,20 @@ import { revalidatePath } from 'next/cache';
 
 
 
-export const getAllBlogs = async (): Promise<{
+export const getAllBlogs = async ({
+  search,
+  category
+}: {
+  search?: string;
+  category?: string;
+}): Promise<{
   success: boolean;
   message: string;
   data?: blogData[]
 }> => {
+  console.log(search, category)
   try {
-    const { data } = await axiosInstance.get('/blog')
+    const { data } = await axiosInstance.get(`/blog?${search ? `search=${search}` : ''}${category ? `&category=${category}` : ''}`)
     return { success: true, message: 'Blogs fetched successfully', data: data.data }
   } catch (error) {
     return handleAxiosError(error);
@@ -68,7 +75,11 @@ export const getBlogByAuthor = async ():
 export const createBlog = async (
   prevState: unknown,
   formData: FormData
-) => {
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: blogData
+}> => {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
@@ -83,6 +94,34 @@ export const createBlog = async (
       success: true,
       message: 'Blog created successfully',
       data
+    })
+  } catch (error) {
+    return handleAxiosError(error);
+  }
+}
+
+export const editBlog = async (
+  prevState: unknown,
+  formData: FormData
+): Promise<{
+  success: boolean;
+  message: string;
+  data?: blogData
+}> => {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(process.env.USER_TOKEN_NAME!)?.value;
+    const { data } = await axiosInstance.patch(`/blog/${formData.get('slug')}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+        Cookie: `${cookieStore}`,
+      }
+    });
+    return ({
+      success: true,
+      message: 'Blog edit successfully',
+      data: data.data
     })
   } catch (error) {
     return handleAxiosError(error);

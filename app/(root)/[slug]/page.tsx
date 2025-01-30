@@ -20,7 +20,7 @@ export default async function Page({
   if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
 
   return (
-    <section className='min-h-dvh space-y-2 md:space-y-4 mt-4'>
+    <section className='min-h-dvh space-y-2 md:space-y-4 mt-4 p-2'>
       <p className='text-sm text-slate-600'>{blog.category}</p>
       <h1 className='text-2xl font-semibold'>{blog.title}</h1>
       <h1 className='text-2xl text-gray-700'>{blog.subtitle}</h1>

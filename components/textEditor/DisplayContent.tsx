@@ -11,7 +11,7 @@ const DisplayContent: React.FC<BlogContentProps> = ({ content }) => {
 
   return (
     <div
-      className="prose"
+      className="prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none"
       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
     />
   );

@@ -1,14 +1,37 @@
+import { Button } from '@/components/ui/button';
 import { formatTimeAgo } from '@/helpers/utils';
 import { getAllBlogs } from '@/lib/action/blog.action';
 import { blogData } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function Page() {
-  const { success, message, data } = await getAllBlogs()
+export default async function Page({
+  searchParams
+}: {
+  searchParams: {
+    search?: string,
+    category?: string
+  }
+}) {
+  const { search, category } = await searchParams;
+  const response = await getAllBlogs({ search: search || '', category: category || '' });
+  if (!response.success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{response.message}</h1>;
+  const blog = response.data as blogData[];
 
-  if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
-  const blog = data as blogData[]
+  if (!blog.length) return (
+    <div className='flex flex-col items-center justify-center min-h-dvh mt-4'>
+      <h1 className='text-3xl font-bold text-center'>Oops! No Blogs Found</h1>
+      <p className='text-lg text-gray-600'>Try adjusting your search or exploring different categories.</p>
+      <Link href='/'>
+        <Button
+          type='button'
+          variant='default'
+          className='mt-4'>
+          Go To Homepage
+        </Button>
+      </Link>
+    </div>
+  );
 
   return (
     <section className='min-h-dvh'>
@@ -17,31 +40,31 @@ export default async function Page() {
           <Link
             key={item._id}
             href={`/${item.slug}`}
-            className='flex min-h-36 h-36 relative gap-2 items-start justify-between border-b-2 p-2 hover:bg-slate-100'
+            className='flex flex-wrap md:flex-nowrap min-h-36 h-36 relative gap-2 items-start justify-between border-b-2 p-2 hover:bg-slate-100'
           >
-            <div className='space-y-2  w-full'>
+            <div className=' space-y-2 min-w-0 flex-1'>
               <h1 className='text-sm'>by @{item.author.username}</h1>
-              <h1 className='font-bold text-lg md:text-xl lg:text-2xl'>{item.title}</h1>
-              <h1 className='text-slate-700'>{item.subtitle}</h1>
+              <h1 className='font-bold text-lg md:text-xl truncate'>{item.title}</h1>
+              <h1 className='text-slate-700 truncate text-xs md:text-sm'>{item.subtitle}</h1>
               <div className='flex justify-between text-xs text-slate-700'>
                 <p>{formatTimeAgo(new Date(item.createdAt))}</p>
                 <p>{item.views} Views</p>
               </div>
             </div>
 
-            <div className='my-auto max-w-40 md:max-w-48 lg:min-w-56'>
+            <div className='shrink-0 my-auto max-w-40 md:max-w-48 lg:min-w-56'>
               <Image
                 src={item.image}
                 alt={item.title}
                 priority
                 width={300}
                 height={300}
-                className="rounded-lg h-full w-full "
+                className="rounded-lg h-full w-full aspect-video"
               />
             </div>
           </Link>
         ))
       }
-    </section>
+    </section >
   )
 }

@@ -1,6 +1,6 @@
 import { updateImage } from '@/helpers/cloudinary.config';
 import connectDb from '@/helpers/dbConfig';
-import { getDataFromToken, handleErrorHttp } from '@/helpers/utils'
+import { generateSlug, getDataFromToken, handleErrorHttp } from '@/helpers/utils'
 import Blog from '@/models/blog.model';
 import User from '@/models/user.model';
 import { NextRequest, NextResponse } from 'next/server';
@@ -88,6 +88,7 @@ export const PATCH = async (req: NextRequest, {
     }
     const blog = await Blog.findOne({ slug });
     if (!blog) {
+
       return NextResponse.json({
         success: false,
         message: 'Blog not found'
@@ -110,15 +111,21 @@ export const PATCH = async (req: NextRequest, {
     const formData = await req.formData();
     const fields = Object.fromEntries(formData);
     let imageUrl = null;
-    if (fields.image) {
+    if (fields.image instanceof File && fields.image.size !== 0) {
       const uploadResult = await updateImage(fields.image as File, blog.image);
       imageUrl = uploadResult
+    }
+
+    let newSlug = null
+    if (fields.title && fields.slug !== blog.slug) {
+      newSlug = await generateSlug(fields.title.toString())
     }
 
     blog.title = fields.title || blog.title;
     blog.content = fields.content || blog.content;
     blog.category = fields.category || blog.category;
     blog.image = imageUrl || blog.image;
+    blog.slug = newSlug || blog.slug
     blog.save();
 
 

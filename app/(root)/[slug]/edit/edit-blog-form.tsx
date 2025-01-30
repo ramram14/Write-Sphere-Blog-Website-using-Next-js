@@ -1,33 +1,36 @@
-'use client';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import Image from 'next/image';
-import React, { useActionState, useEffect, useState } from 'react';
-import imageExample from '@/public/images/image-example-for-create-blog.webp'
-import { blogCategories } from '@/lib/constants';
-import dynamic from 'next/dynamic';
-const Tiptap = dynamic(() => import('@/components/textEditor/Tiptap'), { ssr: false })
-import { Button } from '@/components/ui/button';
-import { createBlog } from '@/lib/action/blog.action';
-import { LoaderCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+'use client'
+import Tiptap from '@/components/textEditor/Tiptap'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { editBlog } from '@/lib/action/blog.action'
+import { blogCategories } from '@/lib/constants'
+import { blogData } from '@/lib/types'
+import { Label } from '@radix-ui/react-label'
+import { LoaderCircle } from 'lucide-react'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useActionState, useEffect, useState } from 'react'
 
-
-
-
-
-export function CreateBlogForm() {
-  const [title, setTitle] = useState('')
-  const [subtitle, setSubtitle] = useState('')
-  const [category, setCategory] = useState('')
+export default function EditBlogForm({
+  blog,
+  slug
+}: {
+  blog: blogData,
+  slug: string
+}) {
+  const [title, setTitle] = useState(blog?.title)
+  const [subtitle, setSubtitle] = useState(blog?.subtitle)
+  const [category, setCategory] = useState(blog?.category)
   const [file, setFile] = useState<File>()
-  const [content, setContent] = useState('')
+  const [content, setContent] = useState(blog?.content)
+
+  const [imagePreview, setImagePreview] = useState<string>()
+  const [data, action, isPending] = useActionState(editBlog, undefined)
   const router = useRouter()
+
   const handleContentChange = (newContent: string) => {
     setContent(newContent)
   }
-  const [imagePreview, setImagePreview] = useState<string>()
-  const [data, action, isPending] = useActionState(createBlog, undefined)
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -36,6 +39,7 @@ export function CreateBlogForm() {
       setImagePreview(URL.createObjectURL(file))
     }
   }
+
 
   useEffect(() => {
     if (data) {
@@ -49,16 +53,15 @@ export function CreateBlogForm() {
 
   }, [isPending, imagePreview, data, router])
 
-
   return (
-    <form className='space-y-4 w-full  pb-[10rem]' action={action}>
+    <form className='space-y-4 w-full pb-[10rem]' action={action}>
+      <input type="text" hidden id='slug' name='slug' required defaultValue={slug} />
       <Label>Title</Label>
       <Input
         id='title'
         name='title'
         type='text'
         placeholder='The Importance of Clean Code in Software Development'
-        required
         minLength={5}
         onChange={(e) => setTitle(e.target.value)}
         defaultValue={title}
@@ -69,7 +72,6 @@ export function CreateBlogForm() {
         name='subtitle'
         type='text'
         placeholder='How Writing Readable and Maintainable Code Leads to Long-Term Success'
-        required
         minLength={5}
         onChange={(e) => setSubtitle(e.target.value)}
         defaultValue={subtitle}
@@ -78,7 +80,7 @@ export function CreateBlogForm() {
       <hr />
       <div className='max-w-2xl mx-auto relative p-1'>
         <Image
-          src={imagePreview || imageExample}
+          src={imagePreview || blog?.image}
           alt={`Image Preview`}
           width={300}
           height={170}
@@ -92,7 +94,6 @@ export function CreateBlogForm() {
         name='image'
         type='file'
         onChange={handleImageChange}
-        required
         defaultValue={file ? file.name : ''}
       />
       <select
@@ -110,7 +111,7 @@ export function CreateBlogForm() {
       <br />
       <Label>Content</Label>
       <textarea hidden id='content' name='content' defaultValue={content} />
-      <Tiptap onChange={handleContentChange} />
+      <Tiptap content={blog?.content} onChange={handleContentChange} />
       {data && data.success === false && (
         isPending ? (
           <LoaderCircle className='animate-spin h-6 w-6 mx-auto mt-4' />
