@@ -6,7 +6,7 @@ export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
 
   const isPublicPath = path === '/sign-in' || path === '/sign-up';
-  const protectedPath = path === '/write';
+  const protectedPath = path === '/write' || path === '/:slug/edit' || path === '/profile/my-post';
 
   const token = req.cookies.get(process.env.USER_TOKEN_NAME!);
 
@@ -26,7 +26,10 @@ export const config = {
   matcher: [
     '/sign-in',
     '/sign-up',
-    '/blog/create',
+    '/write',
+    '/:slug/edit',
+    '/profile',
+    '/profile/my-post',
     "/(api|trpc)(.*)"
   ]
 }
