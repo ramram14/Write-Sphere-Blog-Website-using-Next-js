@@ -41,6 +41,8 @@ export function ProfileImage() {
   return (
     <div className='space-y-2 relative'>
       <input type="file" id='profileImage' name='profileImage' hidden onChange={handleImageChange} />
+
+      {/* Modal */}
       <div className='absolute top-0 left-0'>
         <EllipsisVertical
           onClick={() => setIsPopUpOpen(!isPopUpOpen)}

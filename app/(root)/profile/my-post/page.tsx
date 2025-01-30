@@ -13,7 +13,7 @@ export default async function Page() {
   return (
     <>
       <UserPageDirection direction='My Post' />
-      <section className='max-w-sm md:max-w-full bg-slate-100 mt-2'>
+      <section className='max-w-sm mx-auto md:max-w-full bg-slate-100 mt-2'>
         <h1 className='p-2 text-2xl font-semibold'>Total Post : {blog.length}</h1>
         <div className='space-y-2 border-2 border-b-2 p-2'>
           {blog.map((item) => (
@@ -38,12 +38,13 @@ export default async function Page() {
                   />
                 </div>
 
+
                 {/* Konten Teks */}
                 <div className='space-y-2 flex flex-col w-full overflow-hidden min-w-0'>
                   <h1 className='font-bold text-base sm:text-lg md:text-xl lg:text-2xl truncate'>
                     {item.title}
                   </h1>
-                  <p>Views : {item.views}</p>
+                  <p className='text-xs md:text-sm'>Views : <span className='font-semibold'>{item.views}</span></p>
                   <p className='text-xs md:text-sm'>
                     Created At : {moment(item.createdAt).format('DD-MM-YYYY')}
                   </p>
@@ -57,7 +58,9 @@ export default async function Page() {
               <div className='flex-shrink-0'>
                 <ButtonOptionBlog slugBlog={item.slug} />
               </div>
+
             </div>
+
           ))}
         </div>
       </section>
