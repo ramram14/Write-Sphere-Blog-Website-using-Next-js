@@ -15,6 +15,8 @@ export default function FormComment({
   const { user, isAuthenticated } = useUserStore()
   const [commentInput, setCommentInput] = useState('')
   const [data, action, isPending] = useActionState(createComment, undefined)
+
+  // If success, reset commentInput
   useEffect(() => {
     if (!isPending && !data) {
       setCommentInput('');

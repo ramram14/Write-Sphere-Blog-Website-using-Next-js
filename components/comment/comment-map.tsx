@@ -7,6 +7,9 @@ import moment from 'moment';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useUserStore } from '@/store/user.store';
 
+
+// CommentMap is for map comment
+
 export default function CommentMap({
   comments,
   childComments,
@@ -26,6 +29,8 @@ export default function CommentMap({
         return (
           <div key={comment._id} className='flex gap-4 items-start border-y pb-2 relative'>
             <div>
+
+              {/* Profile Image */}
               <Image
                 src={comment.author.profileImage}
                 alt={`${comment.author.username} profile image`}
@@ -41,6 +46,8 @@ export default function CommentMap({
               </div>
               <div className='space-y-2'>
                 <p className='my-2'>{comment.content}</p>
+
+                {/* Like Button and Answer Button */}
                 <LikeButtonAndAnswerComment
                   isChild={isChild}
                   commentId={comment._id}
@@ -56,7 +63,7 @@ export default function CommentMap({
                 </div>
               )}
 
-              {/* Recursively render child comments */}
+              {/* Recursively render child comments but we set isChild to true */}
               {replies.length > 0 && (
                 <div className="ml-8 mt-4">
                   {childCommentsPopUp && (
@@ -65,6 +72,8 @@ export default function CommentMap({
                 </div>
               )}
             </div>
+
+            {/* Option Button */}
             {user && user._id === comment.author._id && (
               <OptionButtonComment initialContent={comment.content} commentId={comment._id} />
             )}

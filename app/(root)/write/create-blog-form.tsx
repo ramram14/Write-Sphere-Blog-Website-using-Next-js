@@ -29,6 +29,7 @@ export function CreateBlogForm() {
   const [imagePreview, setImagePreview] = useState<string>()
   const [data, action, isPending] = useActionState(createBlog, undefined)
 
+  // Image Preview when user change their images
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -37,12 +38,16 @@ export function CreateBlogForm() {
     }
   }
 
+
+  // If success, redirect to blog
   useEffect(() => {
     if (data) {
       if (data.success) {
         router.replace(`/${data.data?.slug}`);
       }
     }
+
+    // If pending, remove image preview this is because when user send the form the image file in input will autmoatically gone, we remove the preview so thats no misunderstanding
     if (isPending && imagePreview) {
       setImagePreview('')
     }
@@ -110,6 +115,8 @@ export function CreateBlogForm() {
       <br />
       <Label>Content</Label>
       <textarea hidden id='content' name='content' defaultValue={content} />
+
+      {/* Text editor */}
       <Tiptap onChange={handleContentChange} />
       {data && data.success === false && (
         isPending ? (

@@ -13,18 +13,18 @@ export default function ButtonOptionBlog({
   slugBlog: string
 }) {
 
-  const [dataDeleteBlog, actionDeleteBlog, isPending] = useActionState(deleteBlog, undefined)
+  const [data, action, isPending] = useActionState(deleteBlog, undefined)
 
 
 
-  if (dataDeleteBlog && dataDeleteBlog.success === false) {
+  if (data && !data.success) {
     toast.dismiss()
-    toast.error(dataDeleteBlog.message)
+    toast.error(data.message)
   }
 
-  if (dataDeleteBlog && dataDeleteBlog.success) {
+  if (data && data.success) {
     toast.dismiss()
-    toast.success(dataDeleteBlog.message)
+    toast.success(data.message)
   }
   return (
 
@@ -38,7 +38,7 @@ export default function ButtonOptionBlog({
           Edit
         </Button>
       </Link>
-      <form action={actionDeleteBlog} className='w-full hover:bg-slate-300 md:p-1'>
+      <form action={action} className='w-full hover:bg-slate-300 md:p-1'>
         <input type="text" name="slugBlog" hidden defaultValue={slugBlog} />
         <Button
           variant={'outline'}

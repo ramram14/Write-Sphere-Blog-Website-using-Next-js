@@ -23,9 +23,10 @@ export default function SignInForm() {
     formData.append('email', inputData.email);
     formData.append('password', inputData.password);
 
+
+    // If success then push to homepage
     const error = await signIn(formData, () => router.push('/'));
     if (error) {
-      console.log(error);
       setErrorApiResponse(error as [] | string);
     }
   }
@@ -56,6 +57,7 @@ export default function SignInForm() {
           className='p-1 w-full'
           onChange={(e) => SetInputData({ ...inputData, password: e.target.value })}
         />
+        {/* Password toggle visibility */}
         {isPasswordVisible ? (
           <Eye
             onClick={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -68,6 +70,8 @@ export default function SignInForm() {
           />
         )}
       </div>
+
+      {/* Displaying error from api response */}
       {
         Array.isArray(errorApiResponse) && errorApiResponse.length > 0 ? (
           <div className='text-xs text-red-700 bg-red-100 font-semibold rounded-md p-1'>

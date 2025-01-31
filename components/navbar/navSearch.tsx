@@ -11,6 +11,8 @@ export default function NavSearch() {
   return (
     <form className='w-full flex-1' onSubmit={(e) => {
       e.preventDefault()
+
+      // If user input search, we add it to the url
       router.replace(`/?search=${inputSearch}`)
     }}>
       <Input

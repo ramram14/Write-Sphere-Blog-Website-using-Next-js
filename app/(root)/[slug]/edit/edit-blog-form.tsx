@@ -23,7 +23,6 @@ export default function EditBlogForm({
   const [category, setCategory] = useState(blog?.category)
   const [file, setFile] = useState<File>()
   const [content, setContent] = useState(blog?.content)
-
   const [imagePreview, setImagePreview] = useState<string>()
   const [data, action, isPending] = useActionState(editBlog, undefined)
   const router = useRouter()
@@ -32,6 +31,7 @@ export default function EditBlogForm({
     setContent(newContent)
   }
 
+  // Image Preview when user change their images
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -41,12 +41,14 @@ export default function EditBlogForm({
   }
 
 
+  // If success, redirect to blog
   useEffect(() => {
     if (data) {
       if (data.success) {
         router.replace(`/${data.data?.slug}`);
       }
     }
+    // If pending, remove image preview this is because when user send the form the image file in input will autmoatically gone, we remove the preview so thats no misunderstanding
     if (isPending && imagePreview) {
       setImagePreview('')
     }

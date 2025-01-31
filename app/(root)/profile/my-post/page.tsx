@@ -8,6 +8,9 @@ import ButtonOptionBlog from './button-option-blog';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
+// We use force dynamic because the results of this blog page will be different according to the user who is currently logged in.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'My Post',
 };
@@ -18,6 +21,7 @@ export default async function Page() {
   const blog = Array.isArray(data) ? (data as blogData[]) : [];
   return (
     <>
+      {/* Page Direction */}
       <UserPageDirection direction='My Post' />
       <section className='max-w-sm mx-auto md:max-w-full bg-slate-100 mt-2'>
         <h1 className='p-2 text-2xl font-semibold'>Total Post : {blog.length}</h1>
@@ -27,12 +31,11 @@ export default async function Page() {
               key={item._id}
               className='flex justify-between bg-white hover:bg-slate-300 rounded-lg p-2'
             >
-              {/* Konten Teks dan Gambar */}
               <Link
                 href={`/${item.slug}`}
                 className='flex flex-1 min-h-36 h-36 gap-2 items-start justify-between min-w-0'
               >
-                {/* Gambar */}
+                {/* Image */}
                 <div className='my-auto w-32 md:w-48 lg:w-56 flex-shrink-0'>
                   <Image
                     src={item.image}
@@ -45,7 +48,7 @@ export default async function Page() {
                 </div>
 
 
-                {/* Konten Teks */}
+                {/* Text*/}
                 <div className='space-y-2 flex flex-col w-full overflow-hidden min-w-0'>
                   <h1 className='font-bold text-base sm:text-lg md:text-xl lg:text-2xl truncate'>
                     {item.title}
@@ -60,7 +63,7 @@ export default async function Page() {
                 </div>
               </Link>
 
-              {/* Tombol Opsi */}
+              {/* Opsion Button */}
               <div className='flex-shrink-0'>
                 <Suspense fallback={<div>Loading...</div>}>
                   <ButtonOptionBlog slugBlog={item.slug} />

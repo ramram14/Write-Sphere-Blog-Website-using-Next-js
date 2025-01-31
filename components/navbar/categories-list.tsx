@@ -10,27 +10,28 @@ export default function CategoriesList() {
   const [showRightArrow, setShowRightArrow] = useState(true);
   const router = useRouter();
 
-  // Fungsi untuk menangani klik kategori
+  //  Function for handle click
   const handleCategoryClick = (category: string) => {
-    // Arahkan pengguna ke URL dengan parameter category
+
+    // Replace the URL with the selected category
     router.replace(`/?category=${category}`);
   };
 
-  // Fungsi untuk menggeser ke kiri
+  // Function for scroll left
   const scrollLeft = () => {
     if (containerRef.current) {
       containerRef.current.scrollBy({ left: -200, behavior: 'smooth' });
     }
   };
 
-  // Fungsi untuk menggeser ke kanan
+  // Function for scroll right
   const scrollRight = () => {
     if (containerRef.current) {
       containerRef.current.scrollBy({ left: 200, behavior: 'smooth' });
     }
   };
 
-  // Fungsi untuk memeriksa scroll position
+  // Function for check scroll
   const checkScrollPosition = () => {
     if (containerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
@@ -41,7 +42,7 @@ export default function CategoriesList() {
 
   return (
     <div className='relative my-4'>
-      {/* Tombol Navigasi Kiri */}
+      {/* Left Arrow */}
       {showLeftArrow && (
         <button
           type='button'
@@ -53,7 +54,7 @@ export default function CategoriesList() {
         </button>
       )}
 
-      {/* Container Kategori */}
+      {/* Container Categories */}
       <div
         ref={containerRef}
         onScroll={checkScrollPosition}
@@ -66,7 +67,7 @@ export default function CategoriesList() {
           For you
         </div>
 
-        {/* Daftar Kategori */}
+        {/* Categories List */}
         {blogCategories.map((item, i) => (
           <div
             onClick={() => handleCategoryClick(item)}
@@ -78,7 +79,7 @@ export default function CategoriesList() {
         ))}
       </div>
 
-      {/* Tombol Navigasi Kanan */}
+      {/* Right Arrow */}
       {showRightArrow && (
         <button
           type='button'

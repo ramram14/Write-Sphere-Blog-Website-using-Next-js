@@ -53,6 +53,8 @@ export default function RightSideNavbar() {
         href={'/profile'}
       >
         <div className='relative block w-8 h-8 min-w-10 min-h-10'>
+
+          {/* Profile Image */}
           {isAuthenticated && user?.profileImage ? (
             <Image
               src={user.profileImage}

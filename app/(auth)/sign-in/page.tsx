@@ -10,6 +10,8 @@ export default function Page() {
       <div className='abolute top-2 left-2'>
       </div>
       <h1 className='text-xl text-center'>Sign In</h1>
+
+      {/* Form */}
       <SignInForm />
       <p className='text-xs'>don&apos;t have an account?
         {' '}

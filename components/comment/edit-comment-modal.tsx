@@ -23,13 +23,15 @@ export default function EditCommentModal({
       onClose()
     }
   }
-  console.log()
+
+  // If success, close modal
+  // If failed, display error
   useEffect(() => {
     if (data && !data.success) {
       toast.dismiss();
       toast.error(data.message);
     }
-    if (data && data.success === true) {
+    if (data && data.success) {
       onClose()
     }
   })

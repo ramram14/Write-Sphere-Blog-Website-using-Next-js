@@ -11,12 +11,17 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 
+// Profile Data and Profile Image components in one file
+
+
 export function ProfileImage() {
   const { user, isAuthenticated, updateProfile, deleteImage, isLoading } = useUserStore();
   const [isPopUpOpen, setIsPopUpOpen] = useState(false);
   const [imagePreview, setimagePreview] = useState('');
   const [file, setFile] = useState<File>();
 
+
+  // Image Preview when user change their images
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -26,6 +31,8 @@ export function ProfileImage() {
     }
   }
 
+
+  // Update Profile
   const handleUpdateProfile = async () => {
     const formData = new FormData();
     formData.append('profileImage', file!);
@@ -33,6 +40,8 @@ export function ProfileImage() {
     setimagePreview('');
     if (!success) return toast.error(message)
   }
+
+  // Delete Image
   const handleDeleteImage = async () => {
     const { success, message } = await deleteImage()
     setIsPopUpOpen(false)
@@ -45,6 +54,8 @@ export function ProfileImage() {
 
       {/* Modal */}
       <div className='absolute top-0 left-0'>
+
+        {/* PopUp */}
         <EllipsisVertical
           onClick={() => setIsPopUpOpen(!isPopUpOpen)}
           className='p-1 cursor-pointer hover:bg-slate-300' size={30}
@@ -64,21 +75,26 @@ export function ProfileImage() {
 
       </div>
       <div className='relative w-48 h-48 mx-auto'>
-        {isAuthenticated && imagePreview || user?.profileImage ? (
-          <Image
-            src={imagePreview || user?.profileImage || ''}
-            alt={`${user?.username} profile image`}
-            fill
-            priority
-            sizes='(max-width: 768px) 75vw, (max-width: 1200px) 33vw, 22vw'
-            className="rounded-full object-cover "
-          />
-        ) : (
-          <UserIcon
-            className='w-full h-full rounded-full border-4 border-black'
-          />
-        )}
+        {isAuthenticated && imagePreview || user?.profileImage ?
+          (
+
+            // Profile Image
+            <Image
+              src={imagePreview || user?.profileImage || ''}
+              alt={`${user?.username} profile image`}
+              fill
+              priority
+              sizes='(max-width: 768px) 75vw, (max-width: 1200px) 33vw, 22vw'
+              className="rounded-full object-cover "
+            />
+          ) : (
+            <UserIcon
+              className='w-full h-full rounded-full border-4 border-black'
+            />
+          )}
       </div>
+
+      {/* If there is an image preview then delete and save the buttons */}
       {imagePreview && (
         <div className='flex gap-2 md:gap-4 justify-center'>
           <Button

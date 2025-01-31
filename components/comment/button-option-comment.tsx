@@ -11,6 +11,15 @@ import { handleAxiosError } from '@/lib/utils'
 import EditCommentModal from './edit-comment-modal'
 import { Textarea } from '../ui/textarea'
 
+
+// There is 2 component in this file
+// 1. LikeButtonAndAnswerComment
+// 2. OptionButtonComment
+
+// LikeButtonAndAnswerComment is for like comment and answer comment
+// OptionButtonComment is for edit comment and delete comment
+
+
 export function LikeButtonAndAnswerComment({
   likeUsers,
   commentId,
@@ -29,6 +38,7 @@ export function LikeButtonAndAnswerComment({
   const [data, action, isPending] = useActionState(createBlogReplies, undefined)
 
 
+  // Is replies comment success than set isInputAnswerVisible to false
   useEffect(() => {
     if (data && data.success) {
       setIsInputAnswerVisible(false)
@@ -36,23 +46,33 @@ export function LikeButtonAndAnswerComment({
   }, [data])
 
 
-  // Handle klik tombol Like
+  // Handle like click
   const handleLikeClick = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isAuthenticated) {
       toast.error('Please login to give like');
       return;
     }
+
+    // We do optimistic like here, we immediately update the UI than make the request
     const index = likeUsers.indexOf(user?._id ?? '');
+
+    // If user already like the comment then remove the like
     if (index !== -1) {
       likeUsers.splice(index, 1);
+
+      // If user not like the comment then add the like
     } else {
       likeUsers.push(user?._id ?? '');
     }
     try {
       setIsLoading(true);
+
+      // Make the request
       await axiosInstance.post(`/comment/like/${commentId}`);
     } catch (error) {
+
+      // If the request fails, we revert the UI and toast error message
       const index = likeUsers.indexOf(user?._id ?? '');
       if (index !== -1) {
         likeUsers.splice(index, 1);
@@ -91,11 +111,11 @@ export function LikeButtonAndAnswerComment({
           )
         }
 
-        {/* Answer form */}
       </form>
 
 
 
+      {/* Answer form */}
       {isInputAnswerVisible && (
         <form className='py-2' action={action}>
           <input type="text" name="parentComment" defaultValue={commentId} hidden />
@@ -121,7 +141,6 @@ export function LikeButtonAndAnswerComment({
             </Button>
             <Button
               type='submit'
-              // onClick={handleCreateRepliesComment}
               variant={'outline'}
               className='p-1 md:p-2'
               disabled={isPending}
@@ -146,16 +165,18 @@ export function OptionButtonComment({
   initialContent: string
 }) {
   const [isPopupEditCommentVisible, setIsPopupEditCommentVisible] = useState(false);
-  const [dataDeletefunction, actionDeleteFunction, isPending] = useActionState(deleteComment, undefined)
+  const [data, action, isPending] = useActionState(deleteComment, undefined)
   const [isEditing, setIsEditing] = useState(false);
 
 
+
+  // If success, redirect to blog
   useEffect(() => {
-    if (dataDeletefunction && dataDeletefunction.success === false) {
+    if (data && !data.success) {
       toast.dismiss();
-      toast.error(dataDeletefunction.message);
+      toast.error(data.message);
     }
-  }, [dataDeletefunction]);
+  }, [data]);
   return (
     <div className='relative'>
       <EllipsisVertical
@@ -179,7 +200,7 @@ export function OptionButtonComment({
             Edit
           </button>
         </form>
-        <form action={actionDeleteFunction}>
+        <form action={action}>
           <input type="text" name="blogId" defaultValue={commentId} hidden />
           <button
             type='submit'
@@ -189,6 +210,8 @@ export function OptionButtonComment({
           </button>
         </form>
       </div>
+
+      {/* Edit comment modal */}
       {
         isEditing &&
         <EditCommentModal

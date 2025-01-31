@@ -16,10 +16,14 @@ type Props = PageProps & {
 
 export default async function Page({ searchParams }: Props) {
   const { search, category } = await searchParams;
+
+  // If no search or category is provided, fetch all blogs, otherwise fetch blogs based on search or category
   const response = await getAllBlogs({ search: search || '', category: category || '' });
   if (!response.success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{response.message}</h1>;
   const blog = response.data as blogData[];
 
+
+  // If no blog redirect to not found component
   if (!blog.length) return (
     <>
       <CategoriesList />

@@ -11,9 +11,12 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
+      {/* Page Direction */}
       <UserPageDirection direction='Profile' />
       <section className='grid md:grid-cols-2 p-1 min-h-48 bg-slate-100 mt-2'>
         <div className='space-y-4'>
+
+          {/* Profile Image */}
           <Suspense fallback={<LoadingSpinner />}>
             <ProfileImage />
           </Suspense>
@@ -21,6 +24,8 @@ export default function Page() {
         </div>
 
         <div>
+
+          {/* Profile Data */}
           <Suspense fallback={<LoadingSpinner />}>
             <ProfileData />
           </Suspense>

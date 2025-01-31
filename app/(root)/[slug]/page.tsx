@@ -16,7 +16,11 @@ export default async function Page({
   const slug = (await params).slug
   const { success, message, data } = await getBlogBySlug(slug)
   const blog = data as blogData
+
+  // If no blog redirect to not found
   if (success && !blog) return notFound()
+
+  // If api request failed we display the message 
   if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
 
   return (
@@ -27,6 +31,8 @@ export default async function Page({
       <p className='w-fit ml-auto font-semibold text-gray-700'>{blog.views} Views</p>
       <div className='flex gap-4'>
         <div>
+
+          {/* Profile Image */}
           <Image
             src={blog.author.profileImage}
             alt={`${blog.author.username} Profile Image`}
@@ -42,6 +48,8 @@ export default async function Page({
       </div>
       <hr />
       <div className='max-w-2xl mx-auto relative p-1'>
+
+        {/* Blog Image */}
         <Image
           src={blog.image}
           alt={`${blog.title} Image`}
@@ -54,8 +62,12 @@ export default async function Page({
       </div>
       <hr />
       <div>
+
+        {/* The content */}
         <DisplayContent content={blog.content} />
       </div>
+
+      {/* All Comment in here */}
       <CommentContainer blogId={blog._id} />
     </section>
   )

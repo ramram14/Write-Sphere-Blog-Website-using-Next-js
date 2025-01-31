@@ -11,6 +11,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 connectDb();
 
+
+// Delete account
 export const DELETE = async (req: NextRequest) => {
   const session = await mongoose.startSession();
   session.startTransaction();

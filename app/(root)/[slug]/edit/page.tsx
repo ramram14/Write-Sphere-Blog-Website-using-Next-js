@@ -14,7 +14,11 @@ export default async function Page({
   const slug = (await params).slug
   const { success, message, data } = await getBlogBySlug(slug)
   const blog = data as blogData
+
+  // If no blog redirect to not found
   if (success && !blog) return notFound()
+
+  // If api request failed we display the message 
   if (!success) return <h1 className='text-2xl text-center min-h-dvh mt-4'>{message}</h1>
   return (
     <section className='min-h-dvh mt-4 space-y-4 p-4 md:p-0'>
