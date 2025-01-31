@@ -1,8 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useUserStore } from '@/store/user.store';
+// Use relative path because got an error in production
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { useUserStore } from '../../../store/user.store';
 import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
