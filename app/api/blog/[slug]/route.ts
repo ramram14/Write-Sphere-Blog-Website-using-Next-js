@@ -126,7 +126,7 @@ export const PATCH = async (req: NextRequest, {
     blog.category = fields.category || blog.category;
     blog.image = imageUrl || blog.image;
     blog.slug = newSlug || blog.slug
-    blog.save();
+    await blog.save();
 
 
     return NextResponse.json({
@@ -152,7 +152,6 @@ export const DELETE = async (req: NextRequest, {
     const token = req.cookies.get(process.env.USER_TOKEN_NAME!);
     const userId = await getDataFromToken(token);
     const slug = (await params).slug;
-    console.log(slug)
     const blog = await Blog.findOne({ slug });
     if (!blog) {
       return NextResponse.json({

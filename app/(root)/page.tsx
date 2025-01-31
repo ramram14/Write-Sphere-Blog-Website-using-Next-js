@@ -5,12 +5,13 @@ import { getAllBlogs } from '@/lib/action/blog.action';
 import { blogData } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PageProps } from '@/.next/types/app/layout';
-type Props = PageProps & {
-  searchParams: {
+import PageProps from 'next/types';
+
+type Props = typeof PageProps & {
+  searchParams: Promise<{
     search?: string;
     category?: string;
-  };
+  }>;
 };
 
 
